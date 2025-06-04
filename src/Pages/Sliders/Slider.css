@@ -1,0 +1,23 @@
+
+
+
+.btn-circle.btn-xs {
+  
+  width: 30px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.5); 
+  border: none;
+  transition: all 0.3s ease; 
+}
+
+
+.btn-circle.btn-xs.btn-active {
+  background-color: #129990; 
+  transform: scale(1.3); 
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+
+.btn-circle.btn-xs:hover {
+  background-color: black;
+}
