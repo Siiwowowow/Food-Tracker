@@ -2,6 +2,10 @@ import React from 'react';
 import Slider from '../Pages/Sliders/Slider';
 import { useLoaderData } from 'react-router';
 import FoodCard from './FoodCard';
+import Foodcard3 from './Foodcard3';
+import Statistics from '../Pages/statistics';
+import Pricing from '../Pages/pricing';
+import Tips from '../Pages/Tips';
 const Home = () => {
     const InitialFood=useLoaderData()
     console.log(InitialFood);
@@ -16,6 +20,20 @@ const Home = () => {
                 {
                   InitialFood.map(food=><FoodCard key={food._id} food={food}></FoodCard>)  
                 }
+            </div>
+            <div>
+                <Foodcard3></Foodcard3>
+            </div>
+            <div>
+                <Statistics></Statistics>
+            </div>
+            <div>
+                <Tips></Tips>
+            </div>
+            <div className='p-8'>
+                <h1  className="text-3xl text-center font-extrabold text-base-500 mb-2" >Choose Your Plan to Keep Food Fresh and Waste-Free</h1>
+                <p className=" text-base-500 text-xs mb-12 text-center">Stay organized and reduce food waste with our tailored subscription plans. Whether you're a casual user or managing a large household, <br></br> our Food Expiry Tracker helps you monitor expiry dates, get timely reminders, and optimize your grocery usage effortlessly. </p>
+                <Pricing></Pricing>
             </div>
            
         </div>

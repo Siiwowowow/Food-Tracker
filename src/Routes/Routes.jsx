@@ -25,10 +25,12 @@ export const router = createBrowserRouter([
             path: "/",
             loader: () => fetch('http://localhost:3000/foods/limit'),
             element:<Home></Home>
+          
         },
         {
           path: "/fridge",
           loader: () => fetch('http://localhost:3000/foods'),
+          hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
           element: <Fridge></Fridge>
         },
         {
@@ -38,17 +40,20 @@ export const router = createBrowserRouter([
         {
           path: "/foods/:id",
           loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`),
-          element: <PrivateRoute><CardDetails></CardDetails></PrivateRoute>
+          element: <PrivateRoute><CardDetails></CardDetails></PrivateRoute>,
+          hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/my-items",
           element: <MyItems></MyItems>,
-          loader: () => fetch('http://localhost:3000/foods')
+          loader: () => fetch('http://localhost:3000/foods'),
+          hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/update-food/:id",
           element:<UpdateFood></UpdateFood>,
-          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`)
+          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`),
+          hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/sign-in",
@@ -56,7 +61,7 @@ export const router = createBrowserRouter([
         },
         {
           path: "/sign-up",
-          element: <SignUp></SignUp> // Placeholder for SignUp component
+          element: <SignUp></SignUp>
         }
     ]
   },
