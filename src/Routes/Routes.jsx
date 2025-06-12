@@ -10,6 +10,10 @@ import MyItems from "../Components/MyItems";
 import SignIn from "../Components/Sign/SignIn";
 import SignUp from "../Components/SignUp/SignUp";
 import ErrorCard from "../Pages/Error";
+import CardDetails from "../Pages/DetailsPage/CardDetails";
+import PrivateRoute from "../Context/PrivateRoute";
+import UpdateFood from "../Components/UpdateFood/UpdateFood";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -19,19 +23,32 @@ export const router = createBrowserRouter([
         {
             index: true,
             path: "/",
+            loader: () => fetch('http://localhost:3000/foods/limit'),
             element:<Home></Home>
         },
         {
           path: "/fridge",
+          loader: () => fetch('http://localhost:3000/foods'),
           element: <Fridge></Fridge>
         },
         {
           path: "/add-food",
-          element: <AddFood></AddFood>
+          element: <PrivateRoute><AddFood></AddFood></PrivateRoute>
+        },
+        {
+          path: "/foods/:id",
+          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`),
+          element: <PrivateRoute><CardDetails></CardDetails></PrivateRoute>
         },
         {
           path: "/my-items",
-          element: <MyItems></MyItems>
+          element: <MyItems></MyItems>,
+          loader: () => fetch('http://localhost:3000/foods')
+        },
+        {
+          path: "/update-food/:id",
+          element:<UpdateFood></UpdateFood>,
+          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`)
         },
         {
           path: "/sign-in",

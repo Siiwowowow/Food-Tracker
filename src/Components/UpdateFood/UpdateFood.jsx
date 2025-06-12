@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import toast from 'react-hot-toast';
-import { auth } from '../Firebase/Firebase.init'; // adjust the path if needed
 
-const FoodForm = () => {
+const UpdateFood = () => {
+  const { id } = useParams();
   const [foodImage, setFoodImage] = useState('');
   const [foodTitle, setFoodTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -12,58 +13,61 @@ const FoodForm = () => {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-    const user = auth.currentUser;
-    setUserEmail(user?.email || '');
-  }, []);
+    fetch(`http://localhost:3000/foods/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFoodImage(data.foodImage || '');
+        setFoodTitle(data.foodTitle || '');
+        setCategory(data.category || '');
+        setQuantity(data.quantity || '');
+        setExpiryDate(data.expiryDate || '');
+        setDescription(data.description || '');
+        setUserEmail(data.userEmail || '');
+      })
+      .catch((err) => {
+        console.error('Error fetching food:', err);
+        toast.error('Failed to fetch food item.');
+      });
+  }, [id]);
 
-  const handleSubmit = (e) => {
+  const handleUpdateFood = (e) => {
     e.preventDefault();
-    const formData = {
+    const updatedFood = {
       foodImage,
       foodTitle,
       category,
       quantity,
       expiryDate,
       description,
-      addedDate: new Date().toISOString(),
       userEmail,
     };
 
-    fetch('http://localhost:3000/foods', {
-      method: 'POST',
+    fetch(`http://localhost:3000/foods/${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(updatedFood),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('Server response:', data);
-        if (data.insertId || data.insertedId || data.success) {
-          toast.success('Food item added successfully!');
+        if (data.modifiedCount > 0 || data.success) {
+          toast.success('Food item updated successfully!');
         } else {
-          toast.error('Something went wrong. Try again.');
+          toast.error('No changes were made.');
         }
       })
       .catch((error) => {
-        console.error('Error:', error);
-        toast.error('Failed to add food item.');
+        console.error('Error updating food:', error);
+        toast.error('Failed to update food item.');
       });
-
-    // Reset form
-    setFoodImage('');
-    setFoodTitle('');
-    setCategory('');
-    setQuantity('');
-    setExpiryDate('');
-    setDescription('');
   };
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
       <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Add New Food Item</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Update Food Item</h2>
+        <form onSubmit={handleUpdateFood} className="space-y-6">
           {/* Food Image URL */}
           <div>
             <label htmlFor="foodImage" className="block text-sm font-medium text-base-400 mb-2">
@@ -72,7 +76,6 @@ const FoodForm = () => {
             <input
               type="url"
               id="foodImage"
-              name="foodImage"
               value={foodImage}
               onChange={(e) => setFoodImage(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
@@ -86,7 +89,6 @@ const FoodForm = () => {
             )}
           </div>
 
-          {/* Other Inputs */}
           {/* Food Title */}
           <div>
             <label htmlFor="foodTitle" className="block text-sm font-medium text-base-400">
@@ -98,7 +100,6 @@ const FoodForm = () => {
               value={foodTitle}
               onChange={(e) => setFoodTitle(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-              placeholder="e.g., Organic Bananas"
               required
             />
           </div>
@@ -169,7 +170,7 @@ const FoodForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-              placeholder="Brief description of the food item..."
+              placeholder="Update food item description..."
             />
           </div>
 
@@ -182,9 +183,9 @@ const FoodForm = () => {
               type="email"
               id="userEmail"
               value={userEmail}
-              className="shadow-sm bg-base-100 cursor-not-allowed block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               readOnly
               disabled
+              className="shadow-sm bg-base-100 cursor-not-allowed block w-full sm:text-sm border border-gray-300 rounded-md p-2"
             />
           </div>
 
@@ -194,7 +195,7 @@ const FoodForm = () => {
               type="submit"
               className="w-full py-2 px-4 text-white bg-[#129990] hover:bg-[#399b94] rounded-md shadow-sm text-sm font-medium transition-colors duration-200"
             >
-              Add Food Item
+              Update Food Item
             </button>
           </div>
         </form>
@@ -203,4 +204,4 @@ const FoodForm = () => {
   );
 };
 
-export default FoodForm;
+export default UpdateFood;

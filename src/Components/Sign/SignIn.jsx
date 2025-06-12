@@ -1,13 +1,15 @@
 import React, { use, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { FiEye, FiEyeOff, FiLock, FiMail } from 'react-icons/fi';
 import { AuthContext } from '../../Context/AuthContext';
 import toast from 'react-hot-toast';
 
 const SignIn = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const location=useLocation()
+    const from = location.state?.from || '/';
     const [password, setPassword] = useState('');
-    // const [touched, setTouched] = useState(false);
+    
     const navigate = useNavigate()
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
@@ -24,7 +26,7 @@ const SignIn = () => {
         signInUser(email, password)
             .then(result => {
                 toast.success("Signed in successfully,", result.user);
-                navigate('/')
+                navigate(from)
             })
             .catch(error => {
                 toast.error("Error signing in:", error)
@@ -40,7 +42,7 @@ const SignIn = () => {
                 setUser(user);
                 toast.success('sign in successfully!')
 
-                navigate('/')
+                navigate(from);
             })
             .catch((err) => {
                 console.error(err);

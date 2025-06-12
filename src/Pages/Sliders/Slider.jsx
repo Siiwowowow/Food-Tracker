@@ -102,7 +102,7 @@ const Slider = () => {
                         </div>
 
                        
-                        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 z-10">
+                        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 z-0">
                             {images.map((_, dotIndex) => (
                                 <a
                                     key={`dot-${dotIndex}`}
