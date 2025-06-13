@@ -86,12 +86,22 @@ const Navbar = () => {
           </>
         }
         {
-          user? <div className="avatar">
-          <div className="w-8 rounded-full">
-            <img src={`${user?user.photoURL:'https://img.daisyui.com/images/profile/demo/yellingcat@192.webp'}`} />
-          </div>
-        </div>:''
-        }
+  user && (
+    <div className="relative group">
+      <div className="avatar">
+        <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <img src={user.photoURL || 'https://img.daisyui.com/images/profile/demo/yellingcat@192.webp'} />
+        </div>
+      </div>
+      {/* Custom Tooltip */}
+      <div className="absolute right-0 mt-2 w-48 bg-base-100 p-3 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+        <p className="text-sm font-semibold text-gray-800">{user.displayName || "No Name"}</p>
+        <p className="text-xs text-gray-600 break-words">{user.email || "No Email"}</p>
+      </div>
+    </div>
+  )
+}
+
 
       </div>
     </div>

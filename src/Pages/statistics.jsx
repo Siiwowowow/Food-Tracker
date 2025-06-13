@@ -4,15 +4,17 @@ import { FaChartLine, FaShieldAlt, FaClock } from 'react-icons/fa';
 const Statistics = () => {
   return (
     <div className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto text-center px-4">
+      <div  className="max-w-6xl mx-auto text-center px-4">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-2">📊 Impact Statistics</h2>
         <p className="text-gray-600 mb-12">
           See how FreshTracker is helping reduce food waste globally
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div data-aos="fade-down"
+     data-aos-easing="linear"
+     data-aos-duration="1500" className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Card 1 */}
-          <div className="bg-white border border-gray-200 rounded-lg shadow-md p-8 sm:p-10 text-center">
+          <div  className="bg-white border border-gray-200 rounded-lg shadow-md p-8 sm:p-10 text-center">
             <div className="flex justify-center mb-4">
               <FaChartLine className="text-green-500 text-3xl" />
             </div>

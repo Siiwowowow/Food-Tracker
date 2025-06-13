@@ -1,7 +1,7 @@
 import React from 'react';
 import { BsBox } from 'react-icons/bs';
 import { Link } from 'react-router';
-
+import { motion } from "motion/react"
 const FoodCard = ({ food }) => {
   const { foodImage, foodTitle, category, quantity, expiryDate } = food;
   
@@ -12,7 +12,11 @@ const FoodCard = ({ food }) => {
   const isExpiringSoon = (expiry - today) < (3 * 24 * 60 * 60 * 1000);
 
   return (
-    <div className="relative bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+    <motion.div
+     whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onHoverStart={() => console.log('hover started!')}
+     className="relative bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
       {/* Expiry Badges */}
       {isExpired && (
         <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -59,7 +63,7 @@ const FoodCard = ({ food }) => {
         </button>
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
