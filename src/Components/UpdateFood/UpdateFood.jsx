@@ -44,6 +44,7 @@ const UpdateFood = () => {
 
     fetch(`http://localhost:3000/foods/${id}`, {
       method: 'PUT',
+      credentials:'include',
       headers: {
         'Content-Type': 'application/json',
       },

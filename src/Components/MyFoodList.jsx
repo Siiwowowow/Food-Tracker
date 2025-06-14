@@ -27,6 +27,8 @@ const MyFoodList = ({ foodsApiPromise }) => {
             if (result.isConfirmed) {
                 fetch(`http://localhost:3000/foods/${_id}`, {
                     method: 'DELETE',
+                    credentials:'include'
+
                 })
                 .then(res => res.json())
                 .then(data => {

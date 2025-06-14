@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router';
 import FoodCard2 from './FoodCard2';
 import Pagination from './Pagination/Pagisnation';
+import FridgeCount from './Fridge2/FridgeCount';
 
 const Fridge = () => {
     const allFoods = useLoaderData();
@@ -57,7 +58,9 @@ const Fridge = () => {
     // Pagination logic
     const totalPages = Math.ceil(filteredFoods.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
+    console.log(filteredFoods)
     const currentFoods = filteredFoods.slice(startIndex, startIndex + itemsPerPage);
+
 
     return (
         <div className="min-h-screen">
@@ -86,6 +89,8 @@ const Fridge = () => {
                     </label>
                     
                 </form>
+                
+                <FridgeCount foods={filteredFoods}></FridgeCount>
 
                 {/* Category filter */}
                 <div>

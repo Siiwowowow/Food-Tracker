@@ -3,6 +3,7 @@ import { AuthContext } from './AuthContext';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '../Firebase/Firebase.init';
 import { GoogleAuthProvider } from 'firebase/auth';
+import axios from 'axios';
 
 const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
@@ -36,6 +37,12 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth,currentUser=>{
             setUser(currentUser);
             setLoading(false);
+            if(currentUser?.email){
+                axios.post('http://localhost:3000/jwt',{email:currentUser.email},{withCredentials:true})
+                .then(res=>console.log(res.data))
+                .catch(error=>console.log(error))
+            }
+            console.log('user in the auth',currentUser)
         })
         return () => {
             unsubscribe();

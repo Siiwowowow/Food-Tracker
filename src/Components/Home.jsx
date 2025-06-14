@@ -6,7 +6,9 @@ import Foodcard3 from './Foodcard3';
 import Statistics from '../Pages/statistics';
 import Pricing from '../Pages/pricing';
 import Tips from '../Pages/Tips';
-import Fridge2 from './Fridge2/Fridge2';
+
+
+
 const Home = () => {
     const InitialFood=useLoaderData()
     console.log(InitialFood);
@@ -36,7 +38,7 @@ const Home = () => {
                 <p className=" text-base-500 text-xs mb-12 text-center">Stay organized and reduce food waste with our tailored subscription plans. Whether you're a casual user or managing a large household, <br></br> our Food Expiry Tracker helps you monitor expiry dates, get timely reminders, and optimize your grocery usage effortlessly. </p>
                 <Pricing></Pricing>
             </div>
-            <Fridge2></Fridge2>
+            
         </div>
        
     );

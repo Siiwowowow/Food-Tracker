@@ -76,7 +76,7 @@ const Navbar = () => {
         </ul>
       </div>
 
-      <div className="navbar-end gap-2">
+      <div className="navbar-end ">
         
         
         {
@@ -85,22 +85,43 @@ const Navbar = () => {
             <Link to={'/sign-up'} className='btn bg-[#129990] text-amber-50 rounded-4xl'>Sign Up</Link>
           </>
         }
-        {
-  user && (
-    <div className="relative group">
-      <div className="avatar">
-        <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={user.photoURL || 'https://img.daisyui.com/images/profile/demo/yellingcat@192.webp'} />
-        </div>
-      </div>
-      {/* Custom Tooltip */}
-      <div className="absolute right-0 mt-2 w-48 bg-base-100 p-3 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-        <p className="text-sm font-semibold text-gray-800">{user.displayName || "No Name"}</p>
-        <p className="text-xs text-gray-600 break-words">{user.email || "No Email"}</p>
-      </div>
-    </div>
-  )
-}
+        {user ? (
+          <div className="dropdown dropdown-end">
+            <div 
+              tabIndex={0} 
+              role="button" 
+              className="btn bg-amber-50 mx-5 btn-circle avatar tooltip tooltip-bottom" 
+              data-tip={user.displayName || user.email}
+            >
+              <div className="w-8 rounded-full">
+                <img
+                  alt="User Avatar"
+                  src={user?.photoURL || 'https://i.ibb.co/4pDNDk1/default-profile.png'}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    e.target.src = 'https://i.ibb.co/4pDNDk1/default-profile.png';
+                  }}
+                />
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            >
+              <li>
+                <span className="text-sm px-2 py-1">
+                  {user.displayName || user.email}
+                </span>
+              </li>
+              <li><Link to="/my-items">My Items</Link></li>
+              <li><button onClick={handleSignOut}>Logout</button></li>
+            </ul>
+          </div>
+        ) : (
+          <>
+            
+          </>
+        )}
 
 
       </div>

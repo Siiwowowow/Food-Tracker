@@ -24,12 +24,14 @@ export const router = createBrowserRouter([
             index: true,
             path: "/",
             loader: () => fetch('http://localhost:3000/foods/limit'),
-            element:<Home></Home>
-          
+            element:<Home></Home>,
+          hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/fridge",
-          loader: () => fetch('http://localhost:3000/foods'),
+          loader: () => fetch('http://localhost:3000/foods',{
+            credentials:'include'
+          }),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
           element: <Fridge></Fridge>
         },
@@ -45,7 +47,7 @@ export const router = createBrowserRouter([
         },
         {
           path: "/my-items",
-          element: <MyItems></MyItems>,
+          element: <PrivateRoute><MyItems></MyItems></PrivateRoute>,
           loader: () => fetch('http://localhost:3000/foods'),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
