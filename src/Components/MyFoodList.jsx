@@ -25,7 +25,7 @@ const MyFoodList = ({ foodsApiPromise }) => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://localhost:3000/foods/${_id}`, {
+                fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
                     method: 'DELETE',
                     credentials:'include'
 

@@ -54,7 +54,7 @@ const FoodDetails = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/review?foodItem=${encodeURIComponent(foodTitle)}`);
+        const response = await axios.get(`https://a11-food-tracker-crud-server.vercel.app/review?foodItem=${encodeURIComponent(foodTitle)}`);
         setNotes(response.data);
       } catch (error) {
         console.error('Error fetching notes:', error);
@@ -80,7 +80,7 @@ const FoodDetails = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await axios.post('http://localhost:3000/review', { 
+      const response = await axios.post('https://a11-food-tracker-crud-server.vercel.app/review', { 
         review: noteContent,
         foodItem: foodTitle,
         foodId: _id
@@ -119,7 +119,7 @@ const FoodDetails = () => {
     
     setIsDeleting(true);
     try {
-      await axios.delete(`http://localhost:3000/foods/${_id}`, {
+      await axios.delete(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
         withCredentials: true
       });
       toast.success('Food item deleted successfully');
