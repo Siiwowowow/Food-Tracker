@@ -1,12 +1,86 @@
-# React + Vite
+# 🥗 FreshTracker - Food Expiry Tracker System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Live Website: [https://food-tracker-auth.web.app/add-food](https://food-tracker-auth.web.app/add-food)
 
-Currently, two official plugins are available:
+## 🧾 Project Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**FreshTracker** is a full-stack web application designed to help users **track food items**, monitor their **expiry dates**, and reduce food waste by sending timely alerts. It empowers users to **add**, **view**, **update**, and **manage** food items with complete **authentication** and **secure data handling**.
 
-## Expanding the ESLint configuration
+This project was built to practice modern web development using **React**, **Node.js**, **MongoDB**, and **JWT authentication**, while ensuring a clean UI and smooth UX with animation and interactivity.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## ✨ Features
+
+- 🔐 **User Authentication** (JWT-based)
+- 🥫 **Add, Edit, Delete** food items
+- ⏳ **Live Countdown Timer** until food expiry
+- 🗒️ **Add Notes** to your added food items
+- 📁 **User-Specific Access Control** (only the owner can modify their items)
+- 📊 **Filter and Sort** food by category or status
+- 🔔 **Toasts & Alerts** for feedback and confirmation
+- 📱 Fully **Responsive** for mobile, tablet, and desktop
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend:
+- **React** + **React Router DOM**
+- **Tailwind CSS**
+- **DaisyUI** (UI Components)
+- **React Icons**
+- **Framer Motion** (Animations)
+- **AOS (Animate on Scroll)** (Scroll Animations)
+- **React Hot Toast** (Notifications)
+- **SweetAlert2** (Confirmation Dialogs)
+- **NPM Counter** (Auto-increment item count)
+
+### Backend:
+- **Express.js**
+- **MongoDB**
+- **JWT Authentication**
+- **Cookie-based secure sessions**
+
+---
+
+## 🧪 Functionality Walkthrough
+
+1. **Sign up / Login** with email
+2. Add a food item with title, category, quantity, expiry date
+3. View all your foods on the dashboard
+4. See expiry countdown timer live
+5. Add private notes to your own items
+6. Get toast/sweetalert feedback on actions
+7. Edit or delete only your items
+
+---
+
+## 📸 Screenshots
+
+_Coming Soon – include GIFs or images of the site on desktop and mobile._
+
+---
+
+## 🔒 Security
+
+- All **POST, PATCH, DELETE** routes are protected by **JWT**
+- Users cannot manipulate items or notes they didn’t create
+- Secure authentication flow with token-based cookie management
+
+---
+
+## 🧑‍💻 Author
+
+- **Rafsan Ahmed**
+
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** – feel free to use and expand it!
+
+---
+
+🌱 _Built with passion to help reduce food waste and improve personal organization._
