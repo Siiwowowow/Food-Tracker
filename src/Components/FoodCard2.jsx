@@ -21,7 +21,7 @@ const FoodCard2 = ({ food }) => {
       whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
   onHoverStart={() => console.log('hover started!')} 
-      className="relative bg-white rounded-lg shadow border border-gray-200 hover:shadow-md transition-all">
+      className="relative bg-base-100 rounded-lg shadow border border-gray-200 hover:shadow-md transition-all">
         {/* Expiry badge */}
         {isExpired ? (
           <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">

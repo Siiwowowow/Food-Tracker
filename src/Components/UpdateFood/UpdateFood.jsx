@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 
 const UpdateFood = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [foodImage, setFoodImage] = useState('');
   const [foodTitle, setFoodTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -32,6 +34,7 @@ const UpdateFood = () => {
 
   const handleUpdateFood = (e) => {
     e.preventDefault();
+
     const updatedFood = {
       foodImage,
       foodTitle,
@@ -44,7 +47,7 @@ const UpdateFood = () => {
 
     fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${id}`, {
       method: 'PUT',
-      credentials:'include',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -54,6 +57,7 @@ const UpdateFood = () => {
       .then((data) => {
         if (data.modifiedCount > 0 || data.success) {
           toast.success('Food item updated successfully!');
+          setTimeout(() => navigate('/my-items'), 1500);
         } else {
           toast.error('No changes were made.');
         }
@@ -66,12 +70,12 @@ const UpdateFood = () => {
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
-      <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Update Food Item</h2>
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h2 className="text-3xl font-extrabold text-gray-700 text-center mb-8">Update Food Item</h2>
         <form onSubmit={handleUpdateFood} className="space-y-6">
           {/* Food Image URL */}
           <div>
-            <label htmlFor="foodImage" className="block text-sm font-medium text-base-400 mb-2">
+            <label htmlFor="foodImage" className="block text-sm font-medium text-gray-600 mb-1">
               Food Image URL
             </label>
             <input
@@ -79,12 +83,12 @@ const UpdateFood = () => {
               id="foodImage"
               value={foodImage}
               onChange={(e) => setFoodImage(e.target.value)}
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 rounded-md p-2"
               placeholder="https://example.com/image.jpg"
               required
             />
             {foodImage && (
-              <div className="mt-4 border border-gray-300 bg-gray-100 rounded-md p-4 flex justify-center">
+              <div className="mt-4 border border-gray-300 bg-gray-50 rounded-md p-4 flex justify-center">
                 <img src={foodImage} alt="Food Preview" className="h-32 w-32 object-cover rounded-md" />
               </div>
             )}
@@ -92,7 +96,7 @@ const UpdateFood = () => {
 
           {/* Food Title */}
           <div>
-            <label htmlFor="foodTitle" className="block text-sm font-medium text-base-400">
+            <label htmlFor="foodTitle" className="block text-sm font-medium text-gray-600">
               Food Title
             </label>
             <input
@@ -100,21 +104,21 @@ const UpdateFood = () => {
               id="foodTitle"
               value={foodTitle}
               onChange={(e) => setFoodTitle(e.target.value)}
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 rounded-md p-2"
               required
             />
           </div>
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-base-400">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-600">
               Category
             </label>
             <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+              className="block w-full py-2 px-3 border border-gray-300 rounded-md"
               required
             >
               <option value="">Select a category</option>
@@ -131,7 +135,7 @@ const UpdateFood = () => {
 
           {/* Quantity */}
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-base-400">
+            <label htmlFor="quantity" className="block text-sm font-medium text-gray-600">
               Quantity
             </label>
             <input
@@ -139,7 +143,7 @@ const UpdateFood = () => {
               id="quantity"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 rounded-md p-2"
               placeholder="e.g., 6 pieces, 1 kg, 500g"
               required
             />
@@ -147,7 +151,7 @@ const UpdateFood = () => {
 
           {/* Expiry Date */}
           <div>
-            <label htmlFor="expiryDate" className="block text-sm font-medium text-base-400">
+            <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-600">
               Expiry Date
             </label>
             <input
@@ -155,14 +159,14 @@ const UpdateFood = () => {
               id="expiryDate"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 rounded-md p-2"
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-base-400">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-600">
               Description
             </label>
             <textarea
@@ -170,14 +174,14 @@ const UpdateFood = () => {
               rows="3"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 rounded-md p-2"
               placeholder="Update food item description..."
             />
           </div>
 
-          {/* User Email (Read-only) */}
+          {/* User Email (read-only) */}
           <div>
-            <label htmlFor="userEmail" className="block text-sm font-medium text-base-400">
+            <label htmlFor="userEmail" className="block text-sm font-medium text-gray-600">
               User Email
             </label>
             <input
@@ -186,7 +190,7 @@ const UpdateFood = () => {
               value={userEmail}
               readOnly
               disabled
-              className="shadow-sm bg-base-100 cursor-not-allowed block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="block w-full border border-gray-300 bg-gray-100 text-gray-400 rounded-md p-2"
             />
           </div>
 
@@ -194,7 +198,7 @@ const UpdateFood = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 text-white bg-[#129990] hover:bg-[#399b94] rounded-md shadow-sm text-sm font-medium transition-colors duration-200"
+              className="w-full py-2 px-4 text-white bg-[#129990] hover:bg-[#0f827d] rounded-md shadow text-sm font-medium"
             >
               Update Food Item
             </button>

@@ -7,7 +7,6 @@ import axios from 'axios';
 import useAuth from '../../Hooks/useAuth';
 import { Helmet } from 'react-helmet-async';
 
-
 const FoodDetails = () => {
   const {
     _id, foodTitle, foodImage, description, category,
@@ -22,14 +21,12 @@ const FoodDetails = () => {
   const [canAddNote, setCanAddNote] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Check if current user can add notes or edit/delete
   useEffect(() => {
     if (user && user.email === userEmail) {
       setCanAddNote(true);
     }
   }, [user, userEmail]);
 
-  // Calculate time left until expiry
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
@@ -51,7 +48,6 @@ const FoodDetails = () => {
     return () => clearInterval(timer);
   }, [expiryDate]);
 
-  // Fetch notes for this specific food item
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -62,7 +58,6 @@ const FoodDetails = () => {
         toast.error('Failed to load notes.');
       }
     };
-    
     fetchNotes();
   }, [foodTitle]);
 
@@ -133,169 +128,133 @@ const FoodDetails = () => {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/update-food/${_id}`);
-  };
+  const handleEdit = () => navigate(`/update-food/${_id}`);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
   };
 
   return (
-    <div className='container mx-auto p-4 max-w-6xl'>
+    <div className="container mx-auto p-4 max-w-6xl">
       <Helmet>
         <title>{foodTitle} - FreshTracker</title>
         <meta name="description" content={`Details about ${foodTitle}. Learn more about its expiry, category, and notes.`} />
       </Helmet>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-3xl font-bold'>{foodTitle}</h1>
+
+      {/* Title & Actions */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h1 className="text-3xl font-bold">{foodTitle}</h1>
         {user?.email === userEmail && (
-          <div className='flex gap-2'>
-            <button 
-              onClick={handleEdit}
-              className='px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition'
-            >
-              <FiEdit2 className='inline mr-1' /> Edit
+          <div className="flex gap-2">
+            <button onClick={handleEdit} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+              <FiEdit2 className="inline mr-1" /> Edit
             </button>
             <button 
               onClick={handleDelete}
               disabled={isDeleting}
               className={`px-3 py-1 rounded transition ${isDeleting ? 'bg-gray-400' : 'bg-red-500 hover:bg-red-600 text-white'}`}
             >
-              <FiTrash2 className='inline mr-1' /> {isDeleting ? 'Deleting...' : 'Delete'}
+              <FiTrash2 className="inline mr-1" /> {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         )}
       </div>
 
-      <div className='lg:flex gap-8'>
-        <div className='lg:w-1/2 mb-6 lg:mb-0'>
-          <img 
-            className='rounded-lg w-full h-auto max-h-96 object-cover shadow-md' 
-            src={foodImage} 
-            alt={foodTitle} 
-          />
+      {/* Image and Info Section */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="lg:w-1/2">
+          <img src={foodImage} alt={foodTitle} className="rounded-lg w-full max-h-[400px] object-cover shadow-md" />
         </div>
-        
-        <div className='lg:w-1/2 space-y-4'>
-          <div className='bg-white p-4 rounded-lg shadow-sm'>
-            <h2 className='text-xl font-semibold mb-2'>Description</h2>
-            <p className='text-gray-700'>{description}</p>
+
+        <div className="lg:w-1/2 space-y-4 border border-gray-200 p-2 rounded-lg shadow-sm bg-base-100">
+          <div className="bg-base-100 p-4 rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold mb-2">Description</h2>
+            <p className="text-base-400">{description}</p>
           </div>
-          
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='bg-white p-4 rounded-lg shadow-sm'>
-              <p className='flex items-center gap-2 font-medium'>
-                <FiBox className='text-blue-500' /> 
-                <span>Category:</span>
-                <span className='font-mono text-emerald-600 bg-emerald-100 rounded-full px-2 py-1'>
-                  {category}
-                </span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-base-100 border border-gray-200 p-2 rounded-lg shadow-sm ">
+              <p className="flex items-center gap-2 font-medium">
+                <FiBox className="text-blue-500" /> Category: 
+                <span className="font-mono text-emerald-600 bg-emerald-100 rounded-full px-2 py-1">{category}</span>
               </p>
             </div>
-            
-            <div className='bg-white p-4 rounded-lg shadow-sm'>
-              <p className='flex items-center gap-2'>
-                <FiBox className='text-green-500' /> 
-                <span>Quantity:</span>
-                <span className='font-mono text-emerald-600'>
-                  {quantity}
-                </span>
+            <div className="border-gray-200 border p-2 rounded-lg shadow-sm bg-base-100 ">
+              <p className="flex items-center gap-2">
+                <FiBox className="text-green-500" /> Quantity: 
+                <span className="font-mono text-emerald-600">{quantity}</span>
               </p>
             </div>
-            
-            <div className='bg-white p-4 rounded-lg shadow-sm'>
-              <p className='flex items-center gap-2'>
-                <FaRegCalendar className='text-red-400' /> 
-                <span>Expiry Date:</span>
-                <span className='font-mono text-emerald-600'>
-                  {new Date(expiryDate).toLocaleDateString()}
-                </span>
+            <div className="border-gray-200 border p-2 rounded-lg shadow-sm bg-base-100">
+              <p className="flex items-center gap-2">
+                <FaRegCalendar className="text-red-400" /> Expiry: 
+                <span className="font-mono text-emerald-600">{new Date(expiryDate).toLocaleDateString()}</span>
               </p>
             </div>
-            
-            <div className='bg-white p-4 rounded-lg shadow-sm'>
-              <p className='flex items-center gap-2'>
-                <FaRegCalendar /> 
-                <span>Added:</span>
-                <span className='font-mono text-emerald-600'>
-                  {new Date(addedDate).toLocaleDateString()}
-                </span>
+            <div className="border-gray-200 border p-2 rounded-lg shadow-sm bg-base-100">
+              <p className="flex items-center gap-2">
+                <FaRegCalendar /> Added: 
+                <span className="font-mono text-emerald-600">{new Date(addedDate).toLocaleDateString()}</span>
               </p>
             </div>
           </div>
-          
+
           <div className={`p-4 rounded-lg shadow-sm ${timeLeft === 'Expired' ? 'bg-red-100' : 'bg-yellow-100'}`}>
-            <p className='font-semibold'>Expiration Countdown:</p>
-            <p className={`font-mono text-lg ${timeLeft === 'Expired' ? 'text-red-600' : 'text-amber-700'}`}>
-              {timeLeft}
-            </p>
+            <p className="font-bold text-accent ">⏳ Time Left:</p>
+            <p className={`font-mono text-lg ${timeLeft === 'Expired' ? 'text-red-600' : 'text-amber-700'}`}>{timeLeft}</p>
           </div>
         </div>
-      </div> 
-      
-      <div className='mt-8 border-t pt-6'>
-        <div className='flex justify-between items-center mb-4'>
-          <h1 className='text-3xl font-bold'>📝 Notes</h1>
+      </div>
+
+      {/* Notes Section */}
+      <div className="mt-10 border-t pt-6">
+        <div className="flex justify-between items-center mb-4 flex-col sm:flex-row">
+          <h2 className="text-2xl font-bold">📝 Notes</h2>
           {canAddNote && (
-            <p className='text-sm text-gray-500'>You can add notes because you added this item</p>
+            <p className="text-sm text-gray-500">You can add notes because you added this item</p>
           )}
         </div>
-        
-        <form onSubmit={handleNoteSubmit} className='mb-8'>
+
+        <form onSubmit={handleNoteSubmit} className="mb-6">
           <textarea
-            id="note"
-            name='review'
+            name="review"
             rows={4}
-            className={`block w-full px-4 py-3 border ${canAddNote ? 'border-gray-300' : 'border-gray-200 bg-gray-100'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none`}
-            placeholder={canAddNote ? "Share your thoughts about this food item..." : "Only the person who added this item can leave notes"}
+            className={`w-full px-4 py-3 border ${canAddNote ? 'border-gray-300' : 'bg-base-100 border-gray-200'} rounded-lg focus:outline-none resize-none`}
+            placeholder={canAddNote ? "Write a note..." : "Only the creator can add notes"}
             disabled={!canAddNote || isSubmitting}
           />
-          <button 
+          <button
             type="submit"
-            className={`mt-3 px-4 py-2 rounded-md text-white ${!canAddNote ? 'bg-gray-400 cursor-not-allowed' : isSubmitting ? 'bg-gray-400' : 'bg-emerald-500 hover:bg-emerald-600'} transition-colors`}
             disabled={!canAddNote || isSubmitting}
+            className={`mt-3 px-4 py-2 rounded text-base-100 ${canAddNote ? (isSubmitting ? 'bg-gray-400' : 'bg-emerald-500 hover:bg-emerald-600') : 'bg-gray-400 cursor-not-allowed'} transition`}
           >
-            {!canAddNote ? 'Add Note (Not Authorized)' : isSubmitting ? 'Adding...' : 'Add Note'}
+            {canAddNote ? (isSubmitting ? 'Adding...' : 'Add Note') : 'Not Allowed'}
           </button>
-          {!canAddNote && user && (
-            <p className="text-sm text-red-500 mt-1">
-              You didn't add this item, so you can't leave notes.
-            </p>
-          )}
         </form>
-        
-        <div className="mt-6">
-          <h2 className="text-2xl font-semibold mb-4">📜 All Notes</h2>
-          
-          {notes.length > 0 ? (
-            <div className="space-y-4">
-              {notes.map((note) => (
-                <div 
-                  key={note._id} 
-                  className="bg-white p-4 rounded-lg shadow-sm border border-gray-100"
-                >
-                  <p className="text-gray-800 mb-2">{note.review}</p>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-gray-500">
-                      Posted on: {formatDate(note.postedDate || new Date())}
-                    </p>
-                    {note.userEmail === user?.email && (
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        Your note
-                      </span>
-                    )}
-                  </div>
+
+        {/* Notes Display */}
+        {notes.length > 0 ? (
+          <div className="space-y-4">
+            {notes.map(note => (
+              <div key={note._id} className="bg-base-100 p-4 rounded-lg shadow border border-gray-100">
+                <p className="text-base-400 mb-2">{note.review}</p>
+                <div className="flex justify-between items-center text-sm text-base-400">
+                  <span>Posted: {formatDate(note.postedDate || new Date())}</span>
+                  {note.userEmail === user?.email && (
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">Your Note</span>
+                  )}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-gray-50 p-6 rounded-lg text-center">
-              <p className="text-gray-500 italic">No notes yet. Be the first to add one!</p>
-            </div>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-gray-50 p-6 rounded-lg text-center">
+            <p className="text-gray-500 italic">No notes yet. Be the first to add one!</p>
+          </div>
+        )}
       </div>
     </div>
   );

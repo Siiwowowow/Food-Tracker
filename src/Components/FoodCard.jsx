@@ -16,10 +16,10 @@ const FoodCard = ({ food }) => {
      whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
   onHoverStart={() => console.log('hover started!')}
-     className="relative bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+     className="relative bg-base-100 rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
       {/* Expiry Badges */}
       {isExpired && (
-        <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+        <div className="absolute top-2 right-2 bg-red-500 text-base-100 text-xs font-bold px-2 py-1 rounded-full">
           ⚠️ Expired
         </div>
       )}
@@ -41,18 +41,18 @@ const FoodCard = ({ food }) => {
         <h2 className="text-lg font-semibold mb-2">{foodTitle}</h2>
         
         <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-700">
+          <div className="flex items-center text-sm text-base-400">
             <span>Category: </span>
             <span className="ml-1 text-blue-600 font-medium">{category}</span>
           </div>
           
-          <div className="flex items-center text-sm text-gray-700">
+          <div className="flex items-center text-sm text-base-400">
             <BsBox className="mr-1" />
             <span>Quantity: </span>
             <span className="ml-1 text-blue-600 font-medium">{quantity}</span>
           </div>
           
-          <div className="text-sm text-gray-700">
+          <div className="text-sm text-base-400">
             📅 Expires: {expiry.toLocaleDateString()}
           </div>
         </div>

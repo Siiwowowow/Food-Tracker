@@ -3,14 +3,14 @@ import { FaAppleAlt, FaCalendarAlt } from 'react-icons/fa';
 
 const Tips = () => {
     return (
-        <div  className="w-full px-4 py-10 bg-white">
+        <div  className="w-full px-4 py-10 bg-base-100">
             {/* Header */}
             <div  className="text-center mb-10 max-w-3xl mx-auto">
                 <div className="flex items-center justify-center gap-2 mb-2">
                     
-                    <h1 className="text-3xl font-bold text-gray-800">Smart Food Management Tips</h1>
+                    <h1 className="text-3xl font-bold text-base-400">Smart Food Management Tips</h1>
                 </div>
-                <p className="text-gray-600 text-lg">
+                <p className="text-base-400 text-lg">
                     Learn how to maximize freshness and minimize waste with these expert tips
                 </p>
             </div>

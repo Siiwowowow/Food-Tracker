@@ -16,7 +16,7 @@ const FoodExpiredCard2 = ({ food }) => {
   return (
     <div>
 
-      <div className="relative bg-white rounded-lg shadow border border-gray-200 hover:shadow-md transition-all">
+      <div className="relative bg-base-100 rounded-lg shadow border border-gray-200 hover:shadow-md transition-all">
         {/* Expiry badge */}
         {isExpired ? (
           <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">

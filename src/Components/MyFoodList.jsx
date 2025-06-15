@@ -5,129 +5,126 @@ import { Link } from 'react-router';
 import Swal from 'sweetalert2';
 
 const MyFoodList = ({ foodsApiPromise }) => {
-    const initialFoods = use(foodsApiPromise);
-    const [foods, setFoods] = useState(initialFoods);
+  const initialFoods = use(foodsApiPromise);
+  const [foods, setFoods] = useState(initialFoods);
 
-    const getStatus = (expiryDate) => {
-        const today = new Date();
-        const expDate = new Date(expiryDate);
-        return expDate < today ? 'Expired' : 'Active';
-    };
+  const getStatus = (expiryDate) => {
+    const today = new Date();
+    const exp = new Date(expiryDate);
+    return exp < today ? 'Expired' : 'Active';
+  };
 
-    const handleDelete = (_id) => {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
-                    method: 'DELETE',
-                    credentials:'include'
-
-                })
-                .then(res => res.json())
-                .then(data => {
-                   if(data.deletedCount){
-                       setFoods(prevFoods => prevFoods.filter(food => food._id !== _id));
-                       
-                       Swal.fire({
-                           title: "Deleted!",
-                           text: "Your food has been deleted.",
-                           icon: "success"
-                       });
-                   }
-                })
-                .catch(error => {
-                    console.error('Error deleting food:', error);
-                    Swal.fire({
-                        title: "Error!",
-                        text: "There was a problem deleting your food.",
-                        icon: "error"
-                    });
-                });
+  const handleDelete = (_id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.deletedCount) {
+              setFoods(prev => prev.filter(food => food._id !== _id));
+              Swal.fire("Deleted!", "Your food has been deleted.", "success");
             }
-        });
-    };
+          })
+          .catch(() => {
+            Swal.fire("Error!", "There was a problem deleting your food.", "error");
+          });
+      }
+    });
+  };
 
-    return (
-        <div className="p-4">
-            <div className="overflow-x-auto bg-white shadow rounded-lg">
-                <table className="table w-full">
-                    <thead>
-                        <tr className="bg-gray-100 text-gray-600 text-sm uppercase">
-                            <th>#</th>
-                            <th>Food Item</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Expiry Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {foods.map(({
-                            _id,
-                            foodImage,
-                            foodTitle,
-                            description,
-                            category,
-                            quantity,
-                            expiryDate
-                        }, index) => (
-                            <tr key={_id} className="hover:bg-gray-50">
-                                <td>{index + 1}</td>
-                                <td>
-                                    <div className="flex items-center gap-3">
-                                        <div className="avatar">
-                                            <div className="mask mask-squircle w-12 h-12">
-                                                <img src={foodImage} alt={foodTitle} />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div className="font-bold">{foodTitle}</div>
-                                            <div className="text-sm text-gray-500">{description}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span className="badge badge-light-blue capitalize">
-                                        {category}
-                                    </span>
-                                </td>
-                                <td>{quantity}</td>
-                                <td>{new Date(expiryDate).toLocaleDateString()}</td>
-                                <td>
-                                    <span
-                                        className={`badge ${getStatus(expiryDate) === 'Expired'
-                                                ? 'bg-red-100 text-red-500'
-                                                : 'bg-green-100 text-green-500'
-                                            }`}
-                                    >
-                                        {getStatus(expiryDate)}
-                                    </span>
-                                </td>
-                                <td className="space-x-2">
-                                    <Link to={`/update-food/${_id}`}>
-                                    <button className="btn btn-sm bg-blue-600 text-white hover:bg-blue-700">
-                                        <FiShare /> Update
-                                    </button>
-                                    </Link>
-                                    <button onClick={() => handleDelete(_id)} className="btn btn-sm bg-red-500 text-white hover:bg-red-600">
-                                        Delete <FaDeleteLeft />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+  return (
+    <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
+      <table className="table w-full text-sm">
+        <thead>
+          <tr className="bg-base-100 text-base-100 uppercase text-xs hidden md:table-row">
+            <th>#</th>
+            <th>Food Item</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Expiry</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {foods.map((food, index) => (
+            <tr key={food._id} className="hover:bg-base-200 border-b border-gray-100 block md:table-row">
+              {/* Index */}
+              <td className="py-2 px-4 md:table-cell block font-bold">{index + 1}</td>
+
+              {/* Food Details */}
+              <td className="py-2 px-4 flex md:table-cell gap-3 items-center">
+                <div className="avatar hidden md:inline-block">
+                  <div className="mask mask-squircle w-12 h-12">
+                    <img src={food.foodImage} alt={food.foodTitle} />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-semibold">{food.foodTitle}</p>
+                  <p className="text-xs text-base-400 ">{food.description}</p>
+                </div>
+              </td>
+
+              {/* Category */}
+              <td className="py-2 px-4 capitalize md:table-cell block">
+                <span className="badge badge-outline">{food.category}</span>
+              </td>
+
+              {/* Quantity */}
+              <td className="py-2 px-4 md:table-cell block">{food.quantity}</td>
+
+              {/* Expiry */}
+              <td className="py-2 px-4 md:table-cell block">
+                {new Date(food.expiryDate).toLocaleDateString()}
+              </td>
+
+              {/* Status */}
+              <td className="py-2 px-4 md:table-cell block">
+                <span className={`badge ${getStatus(food.expiryDate) === 'Expired'
+                  ? 'bg-red-100 text-red-500'
+                  : 'bg-green-100 text-green-500'
+                  }`}>
+                  {getStatus(food.expiryDate)}
+                </span>
+              </td>
+
+              {/* Actions */}
+              <td className="py-2 px-4 flex gap-2 flex-wrap md:table-cell block">
+                <Link to={`/update-food/${food._id}`}>
+                  <button className="btn btn-sm bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1">
+                    <FiShare /> Update
+                  </button>
+                </Link>
+                <button
+                  onClick={() => handleDelete(food._id)}
+                  className="btn btn-sm bg-red-500 text-white hover:bg-red-600 flex items-center gap-1"
+                >
+                  Delete <FaDeleteLeft />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Mobile empty state */}
+      {foods.length === 0 && (
+        <p className="text-center text-gray-500 p-4">No food items found.</p>
+      )}
+    </div>
+  );
 };
 
 export default MyFoodList;
