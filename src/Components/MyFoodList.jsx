@@ -47,7 +47,7 @@ const MyFoodList = ({ foodsApiPromise }) => {
     <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
       <table className="table w-full text-sm">
         <thead>
-          <tr className="bg-base-100 text-base-100 uppercase text-xs hidden md:table-row">
+          <tr className="bg-base-100 border border-gray-50 text-base-400 uppercase text-xs hidden md:table-row">
             <th>#</th>
             <th>Food Item</th>
             <th>Category</th>

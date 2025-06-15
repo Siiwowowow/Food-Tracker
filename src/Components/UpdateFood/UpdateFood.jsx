@@ -70,12 +70,12 @@ const UpdateFood = () => {
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-3xl font-extrabold text-gray-700 text-center mb-8">Update Food Item</h2>
+      <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h2 className="text-3xl font-extrabold text-base-700 text-center mb-8">Update Food Item</h2>
         <form onSubmit={handleUpdateFood} className="space-y-6">
           {/* Food Image URL */}
           <div>
-            <label htmlFor="foodImage" className="block text-sm font-medium text-gray-600 mb-1">
+            <label htmlFor="foodImage" className="block text-sm font-medium text-base-400 mb-1">
               Food Image URL
             </label>
             <input
@@ -88,7 +88,7 @@ const UpdateFood = () => {
               required
             />
             {foodImage && (
-              <div className="mt-4 border border-gray-300 bg-gray-50 rounded-md p-4 flex justify-center">
+              <div className="mt-4 border border-gray-300 bg-base-100 rounded-md p-4 flex justify-center">
                 <img src={foodImage} alt="Food Preview" className="h-32 w-32 object-cover rounded-md" />
               </div>
             )}
@@ -96,7 +96,7 @@ const UpdateFood = () => {
 
           {/* Food Title */}
           <div>
-            <label htmlFor="foodTitle" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="foodTitle" className="block text-sm font-medium text-base-400">
               Food Title
             </label>
             <input
@@ -111,14 +111,14 @@ const UpdateFood = () => {
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="category" className="block text-sm font-medium text-base-400 ">
               Category
             </label>
             <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md"
+              className="block w-full py-2 px-3 border border-gray-300 rounded-md bg-base-100 text-base-400 focus:outline-none focus:ring-2 focus:ring-[#129990] focus:border-transparent"
               required
             >
               <option value="">Select a category</option>
@@ -135,7 +135,7 @@ const UpdateFood = () => {
 
           {/* Quantity */}
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="quantity" className="block text-sm font-medium text-base-400">
               Quantity
             </label>
             <input
@@ -151,7 +151,7 @@ const UpdateFood = () => {
 
           {/* Expiry Date */}
           <div>
-            <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="expiryDate" className="block text-sm font-medium text-base-400">
               Expiry Date
             </label>
             <input
@@ -166,7 +166,7 @@ const UpdateFood = () => {
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="description" className="block text-sm font-medium text-base-400">
               Description
             </label>
             <textarea
@@ -181,7 +181,7 @@ const UpdateFood = () => {
 
           {/* User Email (read-only) */}
           <div>
-            <label htmlFor="userEmail" className="block text-sm font-medium text-gray-600">
+            <label htmlFor="userEmail" className="block text-sm font-medium text-base-400">
               User Email
             </label>
             <input
@@ -190,7 +190,7 @@ const UpdateFood = () => {
               value={userEmail}
               readOnly
               disabled
-              className="block w-full border border-gray-300 bg-gray-100 text-gray-400 rounded-md p-2"
+              className="block w-full border border-gray-300 bg-base-100 text-base-400 rounded-md p-2"
             />
           </div>
 

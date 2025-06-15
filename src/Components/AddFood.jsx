@@ -118,7 +118,7 @@ const FoodForm = () => {
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+              className="block w-full py-2 px-3 border border-gray-300 rounded-md bg-base-100 text-base-400 focus:outline-none focus:ring-2 focus:ring-[#129990] focus:border-transparent"
               required
             >
               <option value="">Select a category</option>
