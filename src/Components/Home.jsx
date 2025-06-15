@@ -6,6 +6,7 @@ import Foodcard3 from './Foodcard3';
 import Statistics from '../Pages/statistics';
 import Pricing from '../Pages/pricing';
 import Tips from '../Pages/Tips';
+import { Helmet } from 'react-helmet-async';
 
 
 
@@ -14,6 +15,9 @@ const Home = () => {
     console.log(InitialFood);
     return (
         <div>
+            <Helmet>
+                <title>FreshTracker | Home</title>
+            </Helmet>
             <Slider></Slider>
             <h1 className='text-3xl font-bold text-base-500 text-center my-8'>Nearly Expiring Items</h1>
             <p className='text-center text-base-600 mb-8'>These items will expire within the next 5 days. Prioritize using them to reduce food waste!</p>

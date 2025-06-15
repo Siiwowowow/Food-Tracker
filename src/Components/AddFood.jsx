@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { auth } from '../Firebase/Firebase.init'; // adjust the path if needed
+import { Helmet } from 'react-helmet-async';
 
 const FoodForm = () => {
   const [foodImage, setFoodImage] = useState('');
@@ -61,6 +62,11 @@ const FoodForm = () => {
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
+      <Helmet>
+        <title>
+          Add New Food Item - FreshTracker
+        </title>
+      </Helmet>
       <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Add New Food Item</h2>
         <form onSubmit={handleSubmit} className="space-y-6">

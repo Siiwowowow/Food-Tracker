@@ -3,6 +3,7 @@ import { useLoaderData } from 'react-router';
 import FoodCard2 from './FoodCard2';
 import Pagination from './Pagination/Pagisnation';
 import FridgeCount from './Fridge2/FridgeCount';
+import { Helmet } from 'react-helmet-async';
 
 const Fridge = () => {
     const allFoods = useLoaderData();
@@ -64,6 +65,9 @@ const Fridge = () => {
 
     return (
         <div className="min-h-screen">
+            <Helmet><title>
+                Fridge - Your Virtual Food Tracker
+                </title></Helmet>
             <h1 className='text-center text-4xl font-bold'>🥬Your Virtual Fridge</h1>
             <p className='text-center'>Browse and manage all your food items. Use search and filters to quickly find what you're looking for.</p>
 

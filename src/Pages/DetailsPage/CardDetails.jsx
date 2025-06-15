@@ -5,6 +5,7 @@ import { FaRegCalendar } from "react-icons/fa";
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import useAuth from '../../Hooks/useAuth';
+import { Helmet } from 'react-helmet-async';
 
 
 const FoodDetails = () => {
@@ -143,6 +144,10 @@ const FoodDetails = () => {
 
   return (
     <div className='container mx-auto p-4 max-w-6xl'>
+      <Helmet>
+        <title>{foodTitle} - FreshTracker</title>
+        <meta name="description" content={`Details about ${foodTitle}. Learn more about its expiry, category, and notes.`} />
+      </Helmet>
       <div className='flex justify-between items-center mb-6'>
         <h1 className='text-3xl font-bold'>{foodTitle}</h1>
         {user?.email === userEmail && (
