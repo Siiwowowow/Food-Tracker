@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { auth } from '../Firebase/Firebase.init'; // adjust the path if needed
+import { auth } from '../Firebase/Firebase.init'; // adjust path if needed
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router'; // Import useNavigate
 
 const FoodForm = () => {
   const [foodImage, setFoodImage] = useState('');
@@ -12,6 +13,8 @@ const FoodForm = () => {
   const [description, setDescription] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
+  const navigate = useNavigate(); // Initialize navigate function
+
   useEffect(() => {
     const user = auth.currentUser;
     setUserEmail(user?.email || '');
@@ -19,6 +22,7 @@ const FoodForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const formData = {
       foodImage,
       foodTitle,
@@ -32,16 +36,17 @@ const FoodForm = () => {
 
     fetch('https://a11-food-tracker-crud-server.vercel.app/foods', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('Server response:', data);
-        if (data.insertId || data.insertedId || data.success) {
+        if (data.insertedId || data.success) {
           toast.success('Food item added successfully!');
+          // Navigate to /my-items after a short delay to allow toast to show
+          setTimeout(() => {
+            navigate('/my-items');
+          }, 800);
         } else {
           toast.error('Something went wrong. Try again.');
         }
@@ -63,13 +68,12 @@ const FoodForm = () => {
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
       <Helmet>
-        <title>
-          Add New Food Item - FreshTracker
-        </title>
+        <title>Add New Food Item - FreshTracker</title>
       </Helmet>
       <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Add New Food Item</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Input fields here */}
           {/* Food Image URL */}
           <div>
             <label htmlFor="foodImage" className="block text-sm font-medium text-base-400 mb-2">
@@ -78,7 +82,6 @@ const FoodForm = () => {
             <input
               type="url"
               id="foodImage"
-              name="foodImage"
               value={foodImage}
               onChange={(e) => setFoodImage(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
@@ -92,7 +95,6 @@ const FoodForm = () => {
             )}
           </div>
 
-          {/* Other Inputs */}
           {/* Food Title */}
           <div>
             <label htmlFor="foodTitle" className="block text-sm font-medium text-base-400">
@@ -179,7 +181,7 @@ const FoodForm = () => {
             />
           </div>
 
-          {/* User Email (Read-only) */}
+          {/* User Email */}
           <div>
             <label htmlFor="userEmail" className="block text-sm font-medium text-base-400">
               User Email
