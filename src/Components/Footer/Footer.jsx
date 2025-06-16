@@ -1,9 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 const Footer = () => {
     return (
         <div>
             <footer className="footer sm:footer-horizontal bg-base-300 text-base-content p-10">
+                <Link to="/" className="footer-title text-2xl font-bold"> 
+                <h1 className="text-3xl font-bold">Fresh<span className='text-[#279991]'>Tracker</span></h1>
+                <p className="text-sm">Your personal food tracker</p>
+                </Link>
                 <nav>
                     <h6 className="footer-title">Services</h6>
                     <a className="link link-hover">Branding</a>
