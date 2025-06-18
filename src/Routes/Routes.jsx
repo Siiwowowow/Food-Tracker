@@ -13,6 +13,7 @@ import ErrorCard from "../Pages/Error";
 import CardDetails from "../Pages/DetailsPage/CardDetails";
 import PrivateRoute from "../Context/PrivateRoute";
 import UpdateFood from "../Components/UpdateFood/UpdateFood";
+import Service from "../Pages/Component Card/Service";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
         {
           path: "/sign-in",
           element:<SignIn></SignIn>
+        },
+        {
+          path: "/service",
+          element:<Service></Service>
         },
         {
           path: "/sign-up",

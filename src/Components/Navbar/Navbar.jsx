@@ -39,6 +39,7 @@ const Navbar = () => {
       <NavLink to={'/'} className={({ isActive }) => isActive ? "text-[#129990] underline underline-offset-4" : ""}><div className='flex items-center gap-1'><IoHomeOutline />Home</div></NavLink>
       <NavLink to={'/fridge'} className={({ isActive }) => isActive ? "text-[#129990] underline underline-offset-4" : ""}><div className='flex items-center gap-1'><TbFridge />Fridge</div></NavLink>
       <NavLink to={'/add-food'} className={({ isActive }) => isActive ? "text-[#129990] underline underline-offset-4" : ""}><div className='flex items-center gap-1'><GoPlus />Add Food</div></NavLink>
+      <NavLink to={'/service'} className={({ isActive }) => isActive ? "text-[#129990] underline underline-offset-4" : ""}><div className='flex items-center gap-1'><GoPlus />Services</div></NavLink>
       {
         user && <NavLink to={'/my-items'} className={({ isActive }) => isActive ? "text-[#129990] underline underline-offset-4" : ""}><div className='flex items-center gap-1'><FiBox />My Item</div></NavLink>
       }
