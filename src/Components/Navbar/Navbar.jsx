@@ -133,7 +133,7 @@ const Navbar = () => {
                   </div>
                   <ul
   tabIndex={0}
-  className="menu menu-sm dropdown-content bg-base-100 text-base-400 rounded-box z-[1] mt-3 w-52 -mr-9 p-2 shadow-xl"
+  className="menu menu-sm dropdown-content bg-base-100 text-base-400 rounded-box z-[1] mt-3 w-52 lg:-mr-9 p-2 shadow-xl"
 >
   {/* User Profile Section */}
   <li className="border-b border-white/10 mb-1">
