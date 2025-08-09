@@ -13,7 +13,10 @@ createRoot(document.getElementById('root')).render(
       <HelmetProvider>
         <>
         <Toaster position="bottom-right" />
-        <RouterProvider router={router} />
+        <div className='bg-base-200 min-h-screen'>
+          <RouterProvider router={router} />
+        </div>
+        
       </>
       </HelmetProvider>
     </AuthProvider>

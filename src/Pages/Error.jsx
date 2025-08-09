@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import styled from 'styled-components';
 
 const ErrorCard = () => {
@@ -55,7 +56,9 @@ const ErrorCard = () => {
             <div className="base3" />
           </div>
         </div>
+        
       </div>
+      <Link to={'/'} className='btn flex justify-center bg-amber-500'>Back</Link>
     </StyledWrapper>
   );
 }

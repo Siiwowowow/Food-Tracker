@@ -68,19 +68,19 @@ const Service = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <header className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-gray-800 mb-2">Food Expiry Tracker System</h1>
-                <p className="text-xl text-gray-600">Minimize waste and maximize freshness with our comprehensive food management solution</p>
+                <h1 className="text-4xl font-bold text-base-800 mb-2">Food Expiry Tracker System</h1>
+                <p className="text-xl text-base-600">Minimize waste and maximize freshness with our comprehensive food management solution</p>
             </header>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                 {features.map((feature, index) => (
                     <div 
                         key={index} 
-                        className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1"
+                        className="bg-base-100 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 hover:-translate-y-1"
                     >
                         <div className="flex justify-center">{feature.icon}</div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{feature.title}</h3>
-                        <p className="text-gray-600 text-center">{feature.description}</p>
+                        <h3 className="text-xl font-semibold text-base-400 mb-3 text-center">{feature.title}</h3>
+                        <p className="text-base-400 text-center">{feature.description}</p>
                     </div>
                 ))}
             </div>

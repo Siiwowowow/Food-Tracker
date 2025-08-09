@@ -18,7 +18,6 @@ const FoodCard2 = ({ food }) => {
     quantity,
     expiryDate,
     likedBy = [],
-    addedArea = "Not Specified" // Optional area/location field
   } = food || {};
 
   const [liked, setLiked] = useState(false);
@@ -87,7 +86,7 @@ const FoodCard2 = ({ food }) => {
       {/* Content */}
       <div className="p-4">
         <h2 className="text-xl font-bold text-base-400 mb-1">{foodTitle}</h2>
-        <p className="text-sm text-base-400 mb-2">📍 Area: <span className="font-medium">{addedArea}</span></p>
+        
 
         <div className="space-y-1 mb-4 text-sm text-base-400">
           <p><span className="font-medium">Category:</span> {category}</p>
