@@ -64,7 +64,7 @@ const FoodCard2 = ({ food }) => {
     <motion.div
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className="relative bg-white rounded-xl shadow-md border hover:shadow-lg transition-all duration-300 overflow-hidden"
+      className="relative bg-base-100 rounded-xl shadow-md border hover:shadow-lg transition-all duration-300 overflow-hidden"
     >
       {/* Expiry badge */}
       {isExpired ? (
@@ -86,10 +86,10 @@ const FoodCard2 = ({ food }) => {
 
       {/* Content */}
       <div className="p-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-1">{foodTitle}</h2>
-        <p className="text-sm text-gray-500 mb-2">📍 Area: <span className="font-medium">{addedArea}</span></p>
+        <h2 className="text-xl font-bold text-base-400 mb-1">{foodTitle}</h2>
+        <p className="text-sm text-base-400 mb-2">📍 Area: <span className="font-medium">{addedArea}</span></p>
 
-        <div className="space-y-1 mb-4 text-sm text-gray-600">
+        <div className="space-y-1 mb-4 text-sm text-base-400">
           <p><span className="font-medium">Category:</span> {category}</p>
           <p className="flex items-center gap-1"><BsBox /> <span className="font-medium">Quantity:</span> {quantity}</p>
           <p><span className="font-medium">Expires:</span> {expiry.toLocaleDateString()}</p>
@@ -114,8 +114,8 @@ const FoodCard2 = ({ food }) => {
   </span>
 </button>
 
-            <span className="text-xs text-gray-500">❤️ {likeCount}</span>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded-md">Order</button>
+            <span className="text-xs text-gray-500">👍🏻 {likeCount}</span>
+            
           </div>
         </div>
       </div>
