@@ -1,47 +1,102 @@
 import React from 'react';
-// CountUp লাইব্রেরি ইম্পোর্ট করা হচ্ছে যা সংখ্যাকে অ্যানিমেটেডভাবে কাউন্ট করে দেখায়
 import CountUp from 'react-countup';
+import { motion } from 'framer-motion';
 
-// FridgeCount কম্পোনেন্ট, এটি foods প্রপস হিসেবে রিসিভ করে
 const FridgeCount = ({ foods }) => {
-  // আজকের তারিখ সংগ্রহ করা হচ্ছে
   const today = new Date();
 
-  // মেয়াদ উত্তীর্ণ (expired) ফুড আইটেম গুনে বের করা হচ্ছে
   const expiredCount = foods.filter(food => new Date(food.expiryDate) < today).length;
-
-  // যেসব আইটেম ৫ দিনের মধ্যে মেয়াদ শেষ হবে তাদের সংখ্যা বের করা হচ্ছে
+  
   const nearlyExpiredCount = foods.filter(food => {
-    const expiry = new Date(food.expiryDate); // একেকটি ফুডের এক্সপায়ারি তারিখ নেওয়া হচ্ছে
-    const daysLeft = (expiry - today) / (1000 * 60 * 60 * 24); // কতদিন বাকি আছে তা দিন হিসেবে হিসেব করা হচ্ছে
-    return daysLeft >= 0 && daysLeft <= 5; // ০ থেকে ৫ দিনের মধ্যে যেসব এক্সপায়ার হবে তা ফিল্টার করা
+    const expiry = new Date(food.expiryDate);
+    const daysLeft = (expiry - today) / (1000 * 60 * 60 * 24);
+    return daysLeft >= 0 && daysLeft <= 5;
   }).length;
 
-  // UI রেন্ডার অংশ
-  return (
-    // দুইটি কাউন্ট বক্স দেখানোর জন্য ফ্লেক্স লেআউট
-    <div className="flex flex-col md:flex-row justify-center gap-8 p-4 text-center">
-      
-      {/* মেয়াদ উত্তীর্ণ আইটেম কাউন্ট বক্স */}
-      <div className="bg-red-100 border border-red-300 rounded-xl p-4 shadow">
-        <p className="text-lg font-semibold text-red-600">Expired Items</p>
-        <h2 className="text-xl font-bold text-red-700">
-          {/* কাউন্টআপ লাইব্রেরি ব্যবহার করে অ্যানিমেটেড সংখ্যা দেখানো হচ্ছে */}
-          <CountUp end={expiredCount} duration={2} />
-        </h2>
-      </div>
+  const totalItems = foods.length;
+  const safeItems = totalItems - expiredCount - nearlyExpiredCount;
 
-      {/* শীঘ্রই মেয়াদ শেষ হতে যাওয়া আইটেম কাউন্ট বক্স */}
-      <div className="bg-green-100 border border-green-300 rounded-xl p-2 shadow">
-        <p className="text-lg font-semibold text-green-600">Expiring Soon (5 days)</p>
-        <h2 className="text-xl font-bold text-green-500">
-          {/* ৫ দিনের মধ্যে যেগুলো এক্সপায়ার হবে সেগুলোর সংখ্যা */}
-          <CountUp end={nearlyExpiredCount} duration={2} />
-        </h2>
-      </div>
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
+      {/* Expired Items Card */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.5 }}
+        className="bg-gradient-to-br from-red-50 to-red-100 border-l-4 border-red-500 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-red-600">Expired</p>
+            <h2 className="text-3xl font-bold text-red-700">
+              <CountUp end={expiredCount} duration={2} />
+            </h2>
+          </div>
+          <div className="bg-red-100 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        </div>
+        <p className="text-xs mt-2 text-red-500">Items past expiry date</p>
+      </motion.div>
+
+      {/* Expiring Soon Card */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-gradient-to-br from-amber-50 to-amber-100 border-l-4 border-amber-500 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-amber-600">Expiring Soon</p>
+            <h2 className="text-3xl font-bold text-amber-700">
+              <CountUp end={nearlyExpiredCount} duration={2} />
+            </h2>
+          </div>
+          <div className="bg-amber-100 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <p className="text-xs mt-2 text-amber-500">Items expiring in 5 days</p>
+      </motion.div>
+
+      {/* Safe Items Card */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={cardVariants}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-500 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-green-600">Safe Items</p>
+            <h2 className="text-3xl font-bold text-green-700">
+              <CountUp end={safeItems} duration={2} />
+            </h2>
+          </div>
+          <div className="bg-green-100 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <p className="text-xs mt-2 text-green-500">Items with no expiry soon</p>
+      </motion.div>
     </div>
   );
 };
 
-// কম্পোনেন্ট এক্সপোর্ট করা যাতে অন্য জায়গায় ব্যবহার করা যায়
 export default FridgeCount;

@@ -1,6 +1,6 @@
 const NewsLetter = () => {
     return (
-        <div className="flex md:flex-row flex-col border border-gray-500/30 rounded-lg items-start md:items-center justify-between gap-5 text-sm max-w-5xl bg-white p-8">
+        <div className="flex bg-gray-100 md:flex-row flex-col border border-gray-500/30 rounded-lg items-start md:items-center justify-between gap-5 text-sm max-w-5xl p-8">
     <div className="max-w-md w-full">
         <h1 className="text-3xl font-semibold text-gray-700">Subscribe to our newsletter</h1>
         <p className="text-gray-500 mt-2">Nostrud amet eu ullamco nisi aute in ad minim nostrud adipisicing velit quis. Duis tempor incididunt dolore.</p>

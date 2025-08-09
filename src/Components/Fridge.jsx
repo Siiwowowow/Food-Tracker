@@ -87,7 +87,7 @@ const Fridge = () => {
 
             {/* হেডিং অংশ */}
             <h1 className="text-center text-3xl md:text-4xl font-bold mb-2">🥬 Your Virtual Fridge</h1>
-            <p className="text-center mb-6 text-sm md:text-base text-gray-600">
+            <p className="text-center mb-6 text-sm md:text-base text-base-600">
                 ব্রাউজ করুন এবং আপনার ফুড আইটেম ম্যানেজ করুন। সার্চ এবং ফিল্টার ব্যবহার করে দ্রুত খুঁজে পান।
             </p>
 
