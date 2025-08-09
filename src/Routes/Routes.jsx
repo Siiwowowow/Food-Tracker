@@ -32,6 +32,7 @@ export const router = createBrowserRouter([
           path: "/fridge",
           loader: () => fetch('https://a11-food-tracker-crud-server.vercel.app/foods',{
             credentials:'include'
+            
           }),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
           element: <Fridge></Fridge>

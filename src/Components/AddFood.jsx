@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, {  use } from 'react';
 import toast from 'react-hot-toast';
-import { auth } from '../Firebase/Firebase.init'; // adjust path if needed
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router'; // Import useNavigate
+import { useNavigate } from 'react-router';
+import { AuthContext } from '../Context/AuthContext';
 
 const FoodForm = () => {
-  const [foodImage, setFoodImage] = useState('');
-  const [foodTitle, setFoodTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [description, setDescription] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-
-  const navigate = useNavigate(); // Initialize navigate function
-
-  useEffect(() => {
-    const user = auth.currentUser;
-    setUserEmail(user?.email || '');
-  }, []);
+  const { user } = use(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const newFood = Object.fromEntries(formData.entries());
 
-    const formData = {
-      foodImage,
-      foodTitle,
-      category,
-      quantity,
-      expiryDate,
-      description,
-      addedDate: new Date().toISOString(),
-      userEmail,
-    };
+    newFood.addedDate = new Date().toISOString();
+    newFood.userEmail = user?.email;
+    newFood.likedBy = []
 
     fetch('https://a11-food-tracker-crud-server.vercel.app/foods', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(newFood),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.insertedId || data.success) {
           toast.success('Food item added successfully!');
-          // Navigate to /my-items after a short delay to allow toast to show
-          setTimeout(() => {
-            navigate('/my-items');
-          }, 800);
+          setTimeout(() => navigate('/my-items'), 800);
+          form.reset(); // Reset the form fields
         } else {
           toast.error('Something went wrong. Try again.');
         }
@@ -55,14 +37,6 @@ const FoodForm = () => {
         console.error('Error:', error);
         toast.error('Failed to add food item.');
       });
-
-    // Reset form
-    setFoodImage('');
-    setFoodTitle('');
-    setCategory('');
-    setQuantity('');
-    setExpiryDate('');
-    setDescription('');
   };
 
   return (
@@ -73,7 +47,6 @@ const FoodForm = () => {
       <div className="bg-base-100 p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-3xl font-extrabold text-base-500 text-center mb-8">Add New Food Item</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Input fields here */}
           {/* Food Image URL */}
           <div>
             <label htmlFor="foodImage" className="block text-sm font-medium text-base-400 mb-2">
@@ -81,18 +54,12 @@ const FoodForm = () => {
             </label>
             <input
               type="url"
+              name="foodImage"
               id="foodImage"
-              value={foodImage}
-              onChange={(e) => setFoodImage(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="https://example.com/image.jpg"
               required
             />
-            {foodImage && (
-              <div className="mt-4 border border-gray-300 bg-gray-100 rounded-md p-4 flex justify-center">
-                <img src={foodImage} alt="Food Preview" className="h-32 w-32 object-cover rounded-md" />
-              </div>
-            )}
           </div>
 
           {/* Food Title */}
@@ -102,9 +69,8 @@ const FoodForm = () => {
             </label>
             <input
               type="text"
+              name="foodTitle"
               id="foodTitle"
-              value={foodTitle}
-              onChange={(e) => setFoodTitle(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="e.g., Organic Bananas"
               required
@@ -117,9 +83,8 @@ const FoodForm = () => {
               Category
             </label>
             <select
+              name="category"
               id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
               className="block w-full py-2 px-3 border border-gray-300 rounded-md bg-base-100 text-base-400 focus:outline-none focus:ring-2 focus:ring-[#129990] focus:border-transparent"
               required
             >
@@ -142,9 +107,8 @@ const FoodForm = () => {
             </label>
             <input
               type="text"
+              name="quantity"
               id="quantity"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="e.g., 6 pieces, 1 kg, 500g"
               required
@@ -158,9 +122,8 @@ const FoodForm = () => {
             </label>
             <input
               type="date"
+              name="expiryDate"
               id="expiryDate"
-              value={expiryDate}
-              onChange={(e) => setExpiryDate(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               required
             />
@@ -172,24 +135,24 @@ const FoodForm = () => {
               Description
             </label>
             <textarea
+              name="description"
               id="description"
               rows="3"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
               className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               placeholder="Brief description of the food item..."
             />
           </div>
 
-          {/* User Email */}
+          {/* User Email (disabled display only) */}
           <div>
             <label htmlFor="userEmail" className="block text-sm font-medium text-base-400">
               User Email
             </label>
             <input
               type="email"
+              name="userEmailDisplay"
               id="userEmail"
-              value={userEmail}
+              value={user?.email || ''}
               className="shadow-sm bg-base-100 cursor-not-allowed block w-full sm:text-sm border border-gray-300 rounded-md p-2"
               readOnly
               disabled

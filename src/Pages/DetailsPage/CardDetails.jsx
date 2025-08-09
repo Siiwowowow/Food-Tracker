@@ -1,32 +1,42 @@
+// প্রয়োজনীয় প্যাকেজ ও হুকগুলো ইমপোর্ট
 import React, { useState, useEffect } from 'react';
-import { useLoaderData, useNavigate } from 'react-router';
-import { FiBox, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { useLoaderData, useNavigate } from 'react-router'; // React Router থেকে ডেটা লোড ও ন্যাভিগেট
+import { FiBox, FiEdit2, FiTrash2 } from 'react-icons/fi'; // আইকন ইমপোর্ট
 import { FaRegCalendar } from "react-icons/fa";
-import toast from 'react-hot-toast';
-import axios from 'axios';
-import useAuth from '../../Hooks/useAuth';
-import { Helmet } from 'react-helmet-async';
+import toast from 'react-hot-toast'; // টোস্ট মেসেজ দেখানোর জন্য
+import axios from 'axios'; // HTTP রিকোয়েস্ট পাঠানোর জন্য
+import useAuth from '../../Hooks/useAuth'; // কাস্টম হুক থেকে ইউজার তথ্য আনা
+import { Helmet } from 'react-helmet-async'; // SEO টাইটেল সেট করার জন্য
 
 const FoodDetails = () => {
+  // লোড হওয়া ফুড আইটেমের ডেটা ডিস্ট্রাকচার করা
   const {
     _id, foodTitle, foodImage, description, category,
     quantity, expiryDate, addedDate, userEmail
   } = useLoaderData();
+
+  const { user } = useAuth(); // ইউজার ইনফো
+  const navigate = useNavigate(); // নেভিগেশন হুক
   
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  // সময় বাকি থাকার স্টেট
   const [timeLeft, setTimeLeft] = useState('');
+  // মন্তব্য/নোট স্টেট
   const [notes, setNotes] = useState([]);
+  // সাবমিশন চলাকালে বোতাম ডিজেবল রাখতে
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // ইউজার আইটেমটি যোগ করেছে কিনা
   const [canAddNote, setCanAddNote] = useState(false);
+  // ডিলিটিং স্টেট
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // ইউজার যদি আইটেমটি যোগ করে থাকেন, তাহলে নোট অ্যাড করতে পারবেন
   useEffect(() => {
     if (user && user.email === userEmail) {
       setCanAddNote(true);
     }
   }, [user, userEmail]);
 
+  // এক্সপায়ারি সময় বাকি আছে কত, তা রিয়েল টাইমে দেখানোর জন্য
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
@@ -34,9 +44,11 @@ const FoodDetails = () => {
       const difference = expiry - now;
 
       if (difference <= 0) {
-        setTimeLeft('Expired');
+        setTimeLeft('Expired'); // যদি সময় পার হয়ে যায়
         return;
       }
+
+      // সময় পার্থক্য দিন, ঘণ্টা, মিনিটে কনভার্ট করা
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((difference / 1000 / 60) % 60);
@@ -44,15 +56,16 @@ const FoodDetails = () => {
     };
 
     calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 60000);
-    return () => clearInterval(timer);
+    const timer = setInterval(calculateTimeLeft, 60000); // প্রতি ১ মিনিটে আপডেট
+    return () => clearInterval(timer); // ক্লিন-আপ
   }, [expiryDate]);
 
+  // নোট লোড করা
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const response = await axios.get(`https://a11-food-tracker-crud-server.vercel.app/review?foodItem=${encodeURIComponent(foodTitle)}`);
-        setNotes(response.data);
+        setNotes(response.data); // সফল হলে স্টেটে সেভ
       } catch (error) {
         console.error('Error fetching notes:', error);
         toast.error('Failed to load notes.');
@@ -61,6 +74,7 @@ const FoodDetails = () => {
     fetchNotes();
   }, [foodTitle]);
 
+  // নোট সাবমিশন হ্যান্ডলার
   const handleNoteSubmit = async (e) => {
     e.preventDefault();
     if (!canAddNote) return;
@@ -74,7 +88,7 @@ const FoodDetails = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const response = await axios.post('https://a11-food-tracker-crud-server.vercel.app/review', { 
         review: noteContent,
@@ -83,7 +97,8 @@ const FoodDetails = () => {
       }, {
         withCredentials: true
       });
-      
+
+      // সফল সাবমিট
       if (response.data.insertedId) {
         toast.success('Note added successfully!');
         setNotes(prev => [
@@ -110,9 +125,10 @@ const FoodDetails = () => {
     }
   };
 
+  // ফুড ডিলিট হ্যান্ডলার
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this food item?')) return;
-    
+
     setIsDeleting(true);
     try {
       await axios.delete(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
@@ -128,8 +144,10 @@ const FoodDetails = () => {
     }
   };
 
+  // এডিট রাউটে রিডাইরেক্ট
   const handleEdit = () => navigate(`/update-food/${_id}`);
 
+  // তারিখ ফরম্যাট ফাংশন
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
       year: 'numeric', month: 'short', day: 'numeric',
@@ -139,12 +157,13 @@ const FoodDetails = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      {/* হেলমেট দিয়ে পেজ টাইটেল সেট */}
       <Helmet>
         <title>{foodTitle} - FreshTracker</title>
         <meta name="description" content={`Details about ${foodTitle}. Learn more about its expiry, category, and notes.`} />
       </Helmet>
 
-      {/* Title & Actions */}
+      {/* টাইটেল ও এডিট/ডিলিট বাটন */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
         <h1 className="text-3xl font-bold">{foodTitle}</h1>
         {user?.email === userEmail && (
@@ -163,18 +182,20 @@ const FoodDetails = () => {
         )}
       </div>
 
-      {/* Image and Info Section */}
+      {/* ছবির সেকশন ও বর্ণনা */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-1/2">
           <img src={foodImage} alt={foodTitle} className="rounded-lg w-full max-h-[400px] object-cover shadow-md" />
         </div>
 
+        {/* বিস্তারিত তথ্য */}
         <div className="lg:w-1/2 space-y-4 border border-gray-200 p-2 rounded-lg shadow-sm bg-base-100">
           <div className="bg-base-100 p-4 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-2">Description</h2>
             <p className="text-base-400">{description}</p>
           </div>
 
+          {/* ক্যাটাগরি, কোয়ান্টিটি, এক্সপায়ারি, এডেড */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-base-100 border border-gray-200 p-2 rounded-lg shadow-sm ">
               <p className="flex items-center gap-2 font-medium">
@@ -202,6 +223,7 @@ const FoodDetails = () => {
             </div>
           </div>
 
+          {/* সময় বাকি */}
           <div className={`p-4 rounded-lg shadow-sm ${timeLeft === 'Expired' ? 'bg-red-100' : 'bg-yellow-100'}`}>
             <p className="font-bold text-accent ">⏳ Time Left:</p>
             <p className={`font-mono text-lg ${timeLeft === 'Expired' ? 'text-red-600' : 'text-amber-700'}`}>{timeLeft}</p>
@@ -209,7 +231,7 @@ const FoodDetails = () => {
         </div>
       </div>
 
-      {/* Notes Section */}
+      {/* নোট সেকশন */}
       <div className="mt-10 border-t pt-6">
         <div className="flex justify-between items-center mb-4 flex-col sm:flex-row">
           <h2 className="text-2xl font-bold">📝 Notes</h2>
@@ -218,6 +240,7 @@ const FoodDetails = () => {
           )}
         </div>
 
+        {/* ফর্ম */}
         <form onSubmit={handleNoteSubmit} className="mb-6">
           <textarea
             name="review"
@@ -235,7 +258,7 @@ const FoodDetails = () => {
           </button>
         </form>
 
-        {/* Notes Display */}
+        {/* নোটগুলো দেখানো */}
         {notes.length > 0 ? (
           <div className="space-y-4">
             {notes.map(note => (

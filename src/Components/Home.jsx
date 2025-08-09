@@ -7,6 +7,7 @@ import Statistics from '../Pages/statistics';
 import Pricing from '../Pages/pricing';
 import Tips from '../Pages/Tips';
 import { Helmet } from 'react-helmet-async';
+import NewsLetter from './NewsLetter/NewsLetter';
 
 
 
@@ -41,8 +42,17 @@ const Home = () => {
                 <h1  className="text-3xl text-center font-extrabold text-base-500 mb-2" >Choose Your Plan to Keep Food Fresh and Waste-Free</h1>
                 <p className=" text-base-500 text-xs mb-12 text-center">Stay organized and reduce food waste with our tailored subscription plans. Whether you're a casual user or managing a large household, <br></br> our Food Expiry Tracker helps you monitor expiry dates, get timely reminders, and optimize your grocery usage effortlessly. </p>
                 <Pricing></Pricing>
+              
             </div>
             
+             <div className='flex flex-col justify-center items-center mb-3 text-center'>
+  <h1 className='text-3xl font-bold text-gray-800 mb-2'>Stay Updated</h1>
+  <p className='text-gray-600 mb-4 max-w-lg'>
+    Subscribe to our newsletter to receive the latest updates, tips, and exclusive offers 
+    about food management and reducing waste.
+  </p>
+  <NewsLetter></NewsLetter>
+</div>
         </div>
        
     );
