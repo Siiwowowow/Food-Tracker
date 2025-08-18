@@ -14,6 +14,7 @@ import CardDetails from "../Pages/DetailsPage/CardDetails";
 import PrivateRoute from "../Context/PrivateRoute";
 import UpdateFood from "../Components/UpdateFood/UpdateFood";
 import Service from "../Pages/Component Card/Service";
+import FoodDashboard from "../Pages/FoodDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -35,11 +36,15 @@ export const router = createBrowserRouter([
             
           }),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
-          element: <Fridge></Fridge>
+          element: <PrivateRoute><Fridge></Fridge></PrivateRoute>
         },
         {
           path: "/add-food",
           element: <PrivateRoute><AddFood></AddFood></PrivateRoute>
+        },
+        {
+          path: "/FoodDashboard",
+          element: <FoodDashboard></FoodDashboard>
         },
         {
           path: "/foods/:id",

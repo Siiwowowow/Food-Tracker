@@ -13,7 +13,7 @@ const FoodCard = ({ food }) => {
   const isExpiringSoon = (expiry - today) < (3 * 24 * 60 * 60 * 1000);
 
   return (
-    <div className="group w-full h-96 mx-auto [perspective:1000px] cursor-pointer">
+    <div className="group w-72 h-96 mx-auto [perspective:1000px] cursor-pointer">
       <div className="relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
         {/* Front Side */}
         <div className="absolute w-full h-full [backface-visibility:hidden] rounded-md bg-white border border-gray-200 overflow-hidden">

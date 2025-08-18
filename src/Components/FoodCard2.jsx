@@ -18,6 +18,7 @@ const FoodCard2 = ({ food }) => {
     quantity,
     expiryDate,
     likedBy = [],
+    description, // <-- added description
   } = food || {};
 
   const [liked, setLiked] = useState(false);
@@ -29,30 +30,27 @@ const FoodCard2 = ({ food }) => {
     }
   }, [likedBy, user]);
 
- const handleLike = () => {
-  // If user is logged in, prevent liking own item
-  if (user?.email && user.email === userEmail) {
-    return toast.error('Lojja lage na? Nijer item e like!');
-  }
+  const handleLike = () => {
+    if (user?.email && user.email === userEmail) {
+      return toast.error('Lojja lage na? Nijer item e like!');
+    }
 
-  // Prepare email to send - if user logged in send email, else send empty string or 'guest'
-  const emailToSend = user?.email || 'guest';
+    const emailToSend = user?.email || 'guest';
 
-  axios.patch(`https://a11-food-tracker-crud-server.vercel.app/like/${_id}`, {
-    userEmail: emailToSend
-  })
-  .then(data => {
-    const isLiked = data?.data?.liked;
-    setLiked(isLiked);
-    setLikeCount(prev => isLiked ? prev + 1 : prev - 1);
-    toast.success(isLiked ? 'Liked!' : 'Disliked!');
-  })
-  .catch(err => {
-    console.error(err);
-    toast.error('Something went wrong');
-  });
-};
-
+    axios.patch(`https://a11-food-tracker-crud-server.vercel.app/like/${_id}`, {
+      userEmail: emailToSend
+    })
+    .then(data => {
+      const isLiked = data?.data?.liked;
+      setLiked(isLiked);
+      setLikeCount(prev => isLiked ? prev + 1 : prev - 1);
+      toast.success(isLiked ? 'Liked!' : 'Disliked!');
+    })
+    .catch(err => {
+      console.error(err);
+      toast.error('Something went wrong');
+    });
+  };
 
   const today = new Date();
   const expiry = new Date(expiryDate);
@@ -63,7 +61,7 @@ const FoodCard2 = ({ food }) => {
     <motion.div
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className="relative bg-base-100 rounded-xl shadow-md border hover:shadow-lg transition-all duration-300 overflow-hidden"
+      className="relative bg-base-100 rounded-xl shadow-md border hover:shadow-lg transition-all duration-300 overflow-hidden w-82 flex flex-col justify-between"
     >
       {/* Expiry badge */}
       {isExpired ? (
@@ -86,7 +84,13 @@ const FoodCard2 = ({ food }) => {
       {/* Content */}
       <div className="p-4">
         <h2 className="text-xl font-bold text-base-400 mb-1">{foodTitle}</h2>
-        
+
+        {/* Description */}
+        {description && (
+          <p className="text-sm text-gray-600 mb-2 line-clamp-3">
+            {description}
+          </p>
+        )}
 
         <div className="space-y-1 mb-4 text-sm text-base-400">
           <p><span className="font-medium">Category:</span> {category}</p>
@@ -104,17 +108,14 @@ const FoodCard2 = ({ food }) => {
 
           <div className="flex items-center gap-2">
             <button
-  onClick={handleLike}
-  className="flex items-center gap-1 px-2 py-1 text-sm border rounded-full hover:bg-gray-100 transition"
->
-  
-  <span className={`${liked ? 'text-blue-600 font-semibold' : 'text-gray-700'}`}>
-    {liked ? <AiFillLike size={20} className="text-blue-500" /> : <AiOutlineLike size={20} className="text-gray-400" />}
-  </span>
-</button>
-
+              onClick={handleLike}
+              className="flex items-center gap-1 px-2 py-1 text-sm border rounded-full hover:bg-gray-100 transition"
+            >
+              <span className={`${liked ? 'text-blue-600 font-semibold' : 'text-gray-700'}`}>
+                {liked ? <AiFillLike size={20} className="text-blue-500" /> : <AiOutlineLike size={20} className="text-gray-400" />}
+              </span>
+            </button>
             <span className="text-xs text-gray-500">👍🏻 {likeCount}</span>
-            
           </div>
         </div>
       </div>

@@ -19,7 +19,7 @@ const FoodCardExpired = ({ foodPromise, itemsPerPage = 6 }) => {
                 These items have passed their expiry date. Remove them from your inventory to keep your fridge organized.
             </p>
             
-            <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 w-4xl mx-auto' >
                 {currentFoods.map(food => (
                     <FoodExpiredCard2 key={food._id} food={food}></FoodExpiredCard2>
                 ))}

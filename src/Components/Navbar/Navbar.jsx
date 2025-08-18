@@ -8,7 +8,8 @@ import Toogle from '../Toogle/Toogle';
 import { AuthContext } from '../../Context/AuthContext';
 import toast from 'react-hot-toast';
 import { RiCustomerService2Fill } from "react-icons/ri";
-import logo from '../../../public/img2.svg'; // Assuming you have a logo image
+import logo from '../../../public/img2.svg';
+
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [theme, setTheme] = useState(() => {
@@ -35,19 +36,20 @@ const Navbar = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  // ✅ Make Fridge protected
   const allNavLinks = [
     { to: '/', icon: <IoHomeOutline />, text: 'Home', protected: false },
-    { to: '/fridge', icon: <TbFridge />, text: 'Fridge', protected: false },
-    
-    
+    { to: '/fridge', icon: <TbFridge />, text: 'Fridge', protected: true }, // now only logged-in
     { to: '/my-items', icon: <FiBox />, text: 'My Items', protected: true },
     { to: '/add-food', icon: <GoPlus />, text: 'Add Food', protected: true },
+    { to: '/FoodDashboard', icon: <GoPlus />, text: 'FoodDashboard', protected: true },
     { to: '/service', icon: <RiCustomerService2Fill />, text: 'Services', protected: false },
   ];
 
-  const visibleLinks = user 
-    ? allNavLinks 
-    : allNavLinks.filter(link => !link.protected && ['Home', 'Fridge', 'Services'].includes(link.text));
+  // ✅ Show only public links when not logged in
+  const visibleLinks = user
+    ? allNavLinks
+    : allNavLinks.filter(link => !link.protected);
 
   const link = (
     <div className='flex flex-col lg:flex-row gap-4'>
@@ -91,9 +93,7 @@ const Navbar = () => {
             </div>
             <div className='-ml-7 lg:-ml-4'>
               <Link to={'/'}><a className="btn btn-ghost text-xl text-white">
-      
-                <img className='sm:hide lg:w-10' src={logo}
-                alt="Logo"/>
+                <img className='sm:hide lg:w-10' src={logo} alt="Logo"/>
               </a></Link>
             </div>
             <div className='hidden lg:flex items-center gap-2 ml-4'>
@@ -102,7 +102,6 @@ const Navbar = () => {
           </div>
           
           <div className="navbar-center hidden lg:flex">
-            
             <ul className="menu menu-horizontal ">
               {link}
             </ul>
@@ -111,7 +110,6 @@ const Navbar = () => {
           <div className="navbar-end">
             {user ? (
               <>
-                
                 <div className="dropdown dropdown-end">
                   <div 
                     tabIndex={0} 
@@ -128,55 +126,54 @@ const Navbar = () => {
                           e.target.src = 'https://i.ibb.co/4pDNDk1/default-profile.png';
                         }}
                       />
-                      
                     </div>
                   </div>
                   <ul
-  tabIndex={0}
-  className="menu menu-sm dropdown-content bg-base-100 text-base-400 rounded-box z-[1] mt-3 w-52 lg:-mr-9 p-2 shadow-xl"
->
-  {/* User Profile Section */}
-  <li className="border-b border-white/10 mb-1">
-    <div className="flex items-center gap-3 px-2 py-3">
-      <div className="avatar">
-        <div className="w-10 rounded-full  border flex items-center justify-center">
-          {user.photoURL ? (
-            <img src={user.photoURL} alt="User" />
-          ) : (
-            <span className="text-xl">👤</span>
-          )}
-        </div>
-      </div>
-      <div>
-        <p className="font-medium">{user.displayName || "User"}</p>
-        <p className="text-xs text-base-400">{user.email}</p>
-      </div>
-    </div>
-  </li>
+                    tabIndex={0}
+                    className="menu menu-sm dropdown-content bg-base-100 text-base-400 rounded-box z-[1] mt-3 w-52 lg:-mr-9 p-2 shadow-xl"
+                  >
+                    {/* User Profile Section */}
+                    <li className="border-b border-white/10 mb-1">
+                      <div className="flex items-center gap-3 px-2 py-3">
+                        <div className="avatar">
+                          <div className="w-10 rounded-full border flex items-center justify-center">
+                            {user.photoURL ? (
+                              <img src={user.photoURL} alt="User" />
+                            ) : (
+                              <span className="text-xl">👤</span>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="font-medium">{user.displayName || "User"}</p>
+                          <p className="text-xs text-base-400">{user.email}</p>
+                        </div>
+                      </div>
+                    </li>
 
-  {/* Menu Items */}
-  <li>
-    <Link to="/my-items" className="flex items-center gap-2 hover:bg-white/10">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-      My Items
-    </Link>
-  </li>
+                    {/* Menu Items */}
+                    <li>
+                      <Link to="/my-items" className="flex items-center gap-2 hover:bg-white/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        My Items
+                      </Link>
+                    </li>
 
-  {/* Logout Button */}
-  <li className="mt-1">
-    <button 
-      onClick={handleSignOut} 
-      className="flex items-center gap-2 w-full text-left hover:bg-white/10 text-red-500 "
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg>
-      Log Out
-    </button>
-  </li>
-</ul>
+                    {/* Logout Button */}
+                    <li className="mt-1">
+                      <button 
+                        onClick={handleSignOut} 
+                        className="flex items-center gap-2 w-full text-left hover:bg-white/10 text-red-500 "
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Log Out
+                      </button>
+                    </li>
+                  </ul>
                 </div>
               </>
             ) : (

@@ -58,8 +58,8 @@ const Slider = () => {
     };
 
     return (
-        <div>
-            <div className="carousel w-full">
+        <div className='p-2 '>
+            <div className="carousel w-full rounded-2xl ">
                 {images.map((image, index) => (
                     <div
                         key={index}
