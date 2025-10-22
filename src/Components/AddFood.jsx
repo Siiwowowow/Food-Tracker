@@ -1,43 +1,74 @@
-import React, {  use } from 'react';
+import React, { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../Context/AuthContext';
-
 const FoodForm = () => {
-  const { user } = use(AuthContext);
+  const { user } = useContext(AuthContext); // Fixed: use useContext instead of use
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast.error('Please login to add food');
+      return;
+    }
+
     const form = e.target;
     const formData = new FormData(form);
     const newFood = Object.fromEntries(formData.entries());
 
-    newFood.addedDate = new Date().toISOString();
-    newFood.userEmail = user?.email;
-    newFood.likedBy = []
+    // Prepare food data with proper structure
+    const foodData = {
+      foodImage: newFood.foodImage,
+      foodTitle: newFood.foodTitle,
+      foodCategory: newFood.category, // Fixed: match backend field name
+      quantity: newFood.quantity,
+      expiryDate: newFood.expiryDate,
+      description: newFood.description,
+      userEmail: user.email,
+      addedDate: new Date().toISOString(),
+      likedBy: [],
+      expiryNotificationSent: false,
+      expiredNotificationSent: false
+    };
 
-    fetch('https://a11-food-tracker-crud-server.vercel.app/foods', {
+    console.log('📤 Sending food data:', foodData);
+
+    fetch('http://localhost:3000/foods', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newFood),
+      headers: { 
+        'Content-Type': 'application/json' 
+      },
+      credentials: 'include', // Important: include cookies for authentication
+      body: JSON.stringify(foodData),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log('📥 Response status:', res.status);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
+        console.log('✅ Success response:', data);
         if (data.insertedId || data.success) {
           toast.success('Food item added successfully!');
           setTimeout(() => navigate('/my-items'), 800);
-          form.reset(); // Reset the form fields
+          form.reset();
         } else {
           toast.error('Something went wrong. Try again.');
         }
       })
       .catch((error) => {
-        console.error('Error:', error);
-        toast.error('Failed to add food item.');
+        console.error('❌ Error adding food:', error);
+        toast.error('Failed to add food item. Please try again.');
       });
   };
+
+  // Get today's date in YYYY-MM-DD format for min attribute
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
@@ -56,7 +87,7 @@ const FoodForm = () => {
               type="url"
               name="foodImage"
               id="foodImage"
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="input input-bordered w-full"
               placeholder="https://example.com/image.jpg"
               required
             />
@@ -65,13 +96,13 @@ const FoodForm = () => {
           {/* Food Title */}
           <div>
             <label htmlFor="foodTitle" className="block text-sm font-medium text-base-400">
-              Food Title
+              Food Title *
             </label>
             <input
               type="text"
               name="foodTitle"
               id="foodTitle"
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="input input-bordered w-full"
               placeholder="e.g., Organic Bananas"
               required
             />
@@ -80,36 +111,36 @@ const FoodForm = () => {
           {/* Category */}
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-base-400">
-              Category
+              Category *
             </label>
             <select
               name="category"
               id="category"
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md bg-base-100 text-base-400 focus:outline-none focus:ring-2 focus:ring-[#129990] focus:border-transparent"
+              className="select select-bordered w-full"
               required
             >
               <option value="">Select a category</option>
-              <option value="Dairy">Dairy</option>
-              <option value="Meat">Meat</option>
-              <option value="Vegetables">Vegetables</option>
-              <option value="Fruits">Fruits</option>
-              <option value="Grains">Grains</option>
-              <option value="Snacks">Snacks</option>
-              <option value="Beverages">Beverages</option>
-              <option value="Other">Other</option>
+              <option value="dairy">Dairy</option>
+              <option value="meat">Meat</option>
+              <option value="vegetables">Vegetables</option>
+              <option value="fruits">Fruits</option>
+              <option value="grains">Grains</option>
+              <option value="snacks">Snacks</option>
+              <option value="beverages">Beverages</option>
+              <option value="other">Other</option>
             </select>
           </div>
 
           {/* Quantity */}
           <div>
             <label htmlFor="quantity" className="block text-sm font-medium text-base-400">
-              Quantity
+              Quantity *
             </label>
             <input
               type="text"
               name="quantity"
               id="quantity"
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="input input-bordered w-full"
               placeholder="e.g., 6 pieces, 1 kg, 500g"
               required
             />
@@ -118,13 +149,14 @@ const FoodForm = () => {
           {/* Expiry Date */}
           <div>
             <label htmlFor="expiryDate" className="block text-sm font-medium text-base-400">
-              Expiry Date
+              Expiry Date *
             </label>
             <input
               type="date"
               name="expiryDate"
               id="expiryDate"
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              min={today}
+              className="input input-bordered w-full"
               required
             />
           </div>
@@ -138,22 +170,21 @@ const FoodForm = () => {
               name="description"
               id="description"
               rows="3"
-              className="shadow-sm block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              className="textarea textarea-bordered w-full"
               placeholder="Brief description of the food item..."
             />
           </div>
 
-          {/* User Email (disabled display only) */}
+          {/* User Email (display only) */}
           <div>
             <label htmlFor="userEmail" className="block text-sm font-medium text-base-400">
-              User Email
+              Your Email
             </label>
             <input
               type="email"
-              name="userEmailDisplay"
               id="userEmail"
-              value={user?.email || ''}
-              className="shadow-sm bg-base-100 cursor-not-allowed block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              value={user?.email || 'Not logged in'}
+              className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
               readOnly
               disabled
             />
@@ -163,7 +194,7 @@ const FoodForm = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 text-white bg-[#129990] hover:bg-[#399b94] rounded-md shadow-sm text-sm font-medium transition-colors duration-200"
+              className="w-full py-3 px-4 text-white bg-[#129990] hover:bg-[#399b94] rounded-md shadow-sm text-lg font-medium transition-colors duration-200"
             >
               Add Food Item
             </button>
