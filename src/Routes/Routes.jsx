@@ -26,13 +26,13 @@ export const router = createBrowserRouter([
         {
             index: true,
             path: "/",
-            loader: () => fetch('http://localhost:3000/foods/limit'),
+            loader: () => fetch('https://a11-food-tracker-crud-server.vercel.app/foods/limit'),
             element:<Home></Home>,
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/fridge",
-          loader: () => fetch('http://localhost:3000/foods',{
+          loader: () => fetch('https://a11-food-tracker-crud-server.vercel.app/foods',{
             credentials:'include'
             
           }),
@@ -49,20 +49,20 @@ export const router = createBrowserRouter([
         },
         {
           path: "/foods/:id",
-          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`),
+          loader: ({params}) => fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${params.id}`),
           element: <PrivateRoute><CardDetails></CardDetails></PrivateRoute>,
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/my-items",
           element: <PrivateRoute><MyItems></MyItems></PrivateRoute>,
-          loader: () => fetch('http://localhost:3000/foods'),
+          loader: () => fetch('https://a11-food-tracker-crud-server.vercel.app/foods'),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {
           path: "/update-food/:id",
           element:<UpdateFood></UpdateFood>,
-          loader: ({params}) => fetch(`http://localhost:3000/foods/${params.id}`),
+          loader: ({params}) => fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${params.id}`),
           hydrateFallbackElement:<span className="loading loading-spinner loading-xs"></span>,
         },
         {

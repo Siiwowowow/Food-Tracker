@@ -5,7 +5,7 @@ const TestNotification = () => {
   const [notifications, setNotifications] = useState([]);
 
   const checkNotifications = () => {
-    fetch('http://localhost:3000/notifications', {
+    fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
       credentials: 'include'
     })
     .then(res => res.json())
@@ -17,7 +17,7 @@ const TestNotification = () => {
   };
 
   const addTestNotification = () => {
-    fetch('http://localhost:3000/foods', {
+    fetch('https://a11-food-tracker-crud-server.vercel.app/foods', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

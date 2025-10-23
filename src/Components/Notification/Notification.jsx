@@ -15,20 +15,34 @@ const Notification = ({ onClose, onRefresh }) => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/notifications', {
-        credentials: 'include'
+      console.log('🔄 Fetching notifications...');
+      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
+      
+      console.log('📡 Notifications response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Notifications fetched:', data.length);
         setNotifications(data);
         
+        // Call refresh callback to update count in navbar
         if (onRefresh) {
-          setTimeout(onRefresh, 100);
+          console.log('🔄 Calling onRefresh callback...');
+          setTimeout(onRefresh, 500);
         }
+      } else {
+        console.error('❌ Failed to fetch notifications:', response.status);
+        toast.error('Failed to load notifications');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('❌ Error fetching notifications:', error);
+      toast.error('Error loading notifications');
       setNotifications([]);
     } finally {
       setLoading(false);
@@ -37,56 +51,76 @@ const Notification = ({ onClose, onRefresh }) => {
 
   const markAllAsRead = async () => {
     try {
-      const response = await fetch('http://localhost:3000/notifications/mark-read', {
+      console.log('📝 Marking all as read...');
+      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications/mark-read', {
         method: 'PUT',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (response.ok) {
         setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
         toast.success('All notifications marked as read');
-        if (onRefresh) onRefresh();
+        if (onRefresh) {
+          setTimeout(onRefresh, 500);
+        }
+      } else {
+        toast.error('Failed to mark all as read');
       }
     } catch (error) {
-      console.error('Error marking as read:', error);
+      console.error('❌ Error marking as read:', error);
       toast.error('Error marking notifications as read');
     }
   };
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:3000/notifications/${notificationId}/read`, {
+      console.log('📝 Marking notification as read:', notificationId);
+      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/notifications/${notificationId}/read`, {
         method: 'PUT',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (response.ok) {
         setNotifications(prev => prev.map(notif => 
           notif._id === notificationId ? { ...notif, read: true } : notif
         ));
-        if (onRefresh) onRefresh();
+        if (onRefresh) {
+          setTimeout(onRefresh, 300);
+        }
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error('❌ Error marking notification as read:', error);
     }
   };
 
   const deleteNotification = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:3000/notifications/${notificationId}`, {
+      console.log('🗑️ Deleting notification:', notificationId);
+      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/notifications/${notificationId}`, {
         method: 'DELETE',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (response.ok) {
         setNotifications(prev => prev.filter(notif => notif._id !== notificationId));
         toast.success('Notification deleted');
-        if (onRefresh) onRefresh();
+        if (onRefresh) {
+          setTimeout(onRefresh, 300);
+        }
       } else {
         toast.error('Failed to delete notification');
       }
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      console.error('❌ Error deleting notification:', error);
       toast.error('Error deleting notification');
     }
   };
@@ -95,20 +129,26 @@ const Notification = ({ onClose, onRefresh }) => {
     if (notifications.length === 0) return;
     
     try {
-      const response = await fetch('http://localhost:3000/notifications', {
+      console.log('🗑️ Deleting all notifications...');
+      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
         method: 'DELETE',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (response.ok) {
         setNotifications([]);
         toast.success('All notifications deleted');
-        if (onRefresh) onRefresh();
+        if (onRefresh) {
+          setTimeout(onRefresh, 300);
+        }
       } else {
         toast.error('Failed to delete all notifications');
       }
     } catch (error) {
-      console.error('Error deleting all notifications:', error);
+      console.error('❌ Error deleting all notifications:', error);
       toast.error('Error deleting all notifications');
     }
   };
@@ -121,8 +161,6 @@ const Notification = ({ onClose, onRefresh }) => {
         return <FaTrash className="text-red-500" />;
       case 'food_liked':
         return <FaHeart className="text-red-500" />;
-      case 'food_unliked':
-        return <FaRegHeart className="text-gray-500" />;
       case 'review_added':
         return <FaStickyNote className="text-blue-500" />;
       case 'expiry_soon':
@@ -138,23 +176,21 @@ const Notification = ({ onClose, onRefresh }) => {
   const getNotificationColor = (type) => {
     switch (type) {
       case 'food_added':
-        return 'border-green-400 bg-green-50';
+        return 'border-l-4 border-green-400 bg-green-50';
       case 'food_removed':
-        return 'border-red-400 bg-red-50';
+        return 'border-l-4 border-red-400 bg-red-50';
       case 'food_liked':
-        return 'border-pink-400 bg-pink-50';
-      case 'food_unliked':
-        return 'border-gray-400 bg-gray-50';
+        return 'border-l-4 border-pink-400 bg-pink-50';
       case 'review_added':
-        return 'border-blue-400 bg-blue-50';
+        return 'border-l-4 border-blue-400 bg-blue-50';
       case 'expiry_soon':
-        return 'border-orange-400 bg-orange-50';
+        return 'border-l-4 border-orange-400 bg-orange-50';
       case 'expiry_today':
-        return 'border-red-400 bg-red-50';
+        return 'border-l-4 border-red-400 bg-red-50';
       case 'expired':
-        return 'border-red-400 bg-red-50';
+        return 'border-l-4 border-red-400 bg-red-50';
       default:
-        return 'border-gray-400 bg-gray-50';
+        return 'border-l-4 border-gray-400 bg-gray-50';
     }
   };
 
@@ -164,7 +200,10 @@ const Notification = ({ onClose, onRefresh }) => {
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000] px-3">
       <div className="bg-white w-full max-w-2xl rounded-lg p-5 relative max-h-[80vh] flex flex-col">
         {/* Close Button */}
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-gray-800">
+        <button 
+          onClick={onClose} 
+          className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 z-10"
+        >
           <IoClose className="text-2xl" />
         </button>
 
@@ -203,6 +242,7 @@ const Notification = ({ onClose, onRefresh }) => {
           {loading ? (
             <div className="flex justify-center items-center p-8">
               <div className="loading loading-spinner loading-md text-[#279991]"></div>
+              <span className="ml-2">Loading notifications...</span>
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-8 bg-gray-50 rounded-lg text-center text-gray-500">
@@ -215,9 +255,9 @@ const Notification = ({ onClose, onRefresh }) => {
               {notifications.map((notification) => (
                 <div 
                   key={notification._id} 
-                  className={`p-4 rounded-lg border-l-4 ${getNotificationColor(notification.type)} ${
+                  className={`p-4 rounded-lg ${getNotificationColor(notification.type)} ${
                     notification.read ? 'opacity-75' : 'opacity-100'
-                  } relative group transition-all duration-200 hover:shadow-md`}
+                  } relative group transition-all duration-200 hover:shadow-md cursor-pointer`}
                   onClick={() => !notification.read && markAsRead(notification._id)}
                 >
                   <div className="flex items-start gap-3">
@@ -230,7 +270,7 @@ const Notification = ({ onClose, onRefresh }) => {
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs px-2 py-1 bg-gray-200 rounded-full capitalize">
-                          {notification.type.replace('_', ' ')}
+                          {notification.type.replace(/_/g, ' ')}
                         </span>
                         <span className="text-xs text-gray-500">
                           {new Date(notification.createdAt).toLocaleString()}

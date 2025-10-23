@@ -36,7 +36,7 @@ const FoodForm = () => {
 
     console.log('📤 Sending food data:', foodData);
 
-    fetch('http://localhost:3000/foods', {
+    fetch('https://a11-food-tracker-crud-server.vercel.app/foods', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json' 

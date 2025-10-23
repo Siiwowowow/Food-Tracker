@@ -8,7 +8,6 @@ import Pricing from '../Pages/pricing';
 import Tips from '../Pages/Tips';
 import { Helmet } from 'react-helmet-async';
 import NewsLetter from './NewsLetter/NewsLetter';
-import TestNotification from './Notification/TestNotification';
 
 const Home = () => {
     const data = useLoaderData();
@@ -34,7 +33,7 @@ const Home = () => {
             </p>
 
             {/* Food Cards Section */}
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
+            <div className='grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
                 {InitialFood.length > 0 ? (
                     InitialFood.map(food => <FoodCard key={food._id} food={food} />)
                 ) : (

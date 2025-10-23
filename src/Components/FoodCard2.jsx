@@ -47,7 +47,7 @@ const FoodCard2 = ({ food }) => {
     setIsLiking(true);
 
     try {
-      const response = await fetch(`http://localhost:3000/like/${_id}`, {
+      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/like/${_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

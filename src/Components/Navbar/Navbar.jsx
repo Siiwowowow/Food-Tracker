@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { IoHomeOutline, IoNotificationsOutline } from "react-icons/io5";
 import { TbFridge } from "react-icons/tb";
@@ -37,47 +36,76 @@ const Navbar = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/notifications/count', {
-        credentials: 'include'
+      console.log('🔄 Fetching notification count for user:', user.email);
+      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications/count', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
+      console.log('📡 Notification count response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
-        console.log('Notification count:', data.count);
+        console.log('✅ Notification count data:', data);
         setNotificationCount(data.count || 0);
+      } else {
+        console.error('❌ Failed to fetch notification count:', response.status);
+        // If count endpoint fails, try fetching all notifications
+        await fetchTotalNotifications();
       }
     } catch (error) {
-      console.error('Error fetching notification count:', error);
+      console.error('❌ Error fetching notification count:', error);
       // Fallback: fetch all notifications and count unread
-      fetchTotalNotifications();
+      await fetchTotalNotifications();
     }
   };
 
   // Backup method if count API doesn't work
   const fetchTotalNotifications = async () => {
     try {
-      const response = await fetch('http://localhost:3000/notifications', {
-        credentials: 'include'
+      console.log('🔄 Fetching all notifications as fallback...');
+      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (response.ok) {
         const data = await response.json();
         const unreadCount = data.filter(notif => !notif.read).length;
+        console.log('📊 Manual unread count:', unreadCount);
         setNotificationCount(unreadCount);
+      } else {
+        console.error('❌ Failed to fetch notifications:', response.status);
+        setNotificationCount(0);
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error('❌ Error fetching notifications:', error);
+      setNotificationCount(0);
     }
+  };
+
+  // Refresh notification count
+  const refreshNotificationCount = () => {
+    console.log('🔄 Manually refreshing notification count...');
+    fetchNotificationCount();
   };
 
   useEffect(() => {
     if (user) {
+      console.log('👤 User detected, fetching notifications...');
       fetchNotificationCount();
       
       // Refresh every 30 seconds
       const interval = setInterval(fetchNotificationCount, 30000);
       return () => clearInterval(interval);
     } else {
+      console.log('👤 No user, setting count to 0');
       setNotificationCount(0);
     }
   }, [user]);
@@ -85,9 +113,11 @@ const Navbar = () => {
   // Refresh count when notification modal closes
   useEffect(() => {
     if (!isNotificationOpen) {
+      console.log('📢 Notification modal closed, refreshing count...');
+      // Small delay to ensure backend has processed any changes
       setTimeout(() => {
         fetchNotificationCount();
-      }, 500);
+      }, 1000);
     }
   }, [isNotificationOpen]);
 
@@ -114,6 +144,20 @@ const Navbar = () => {
   ];
   const visibleLinks = user ? allNavLinks : allNavLinks.filter((link) => !link.protected);
 
+  // Close AI when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (aiRef.current && !aiRef.current.contains(event.target)) {
+        setIsAiOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="w-full sticky top-0 z-50 bg-[#279991] shadow-sm">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,17 +182,18 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-[#279991] rounded-box mt-3 w-52 p-2 shadow text-white"
               >
                 {visibleLinks.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "font-semibold underline underline-offset-4"
-                        : "hover:text-gray-200"
-                    }
-                  >
-                    <div className="flex items-center gap-1">{link.icon} {link.text}</div>
-                  </NavLink>
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className={({ isActive }) =>
+                        isActive
+                          ? "font-semibold underline underline-offset-4"
+                          : "hover:text-gray-200"
+                      }
+                    >
+                      <div className="flex items-center gap-1">{link.icon} {link.text}</div>
+                    </NavLink>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -163,17 +208,18 @@ const Navbar = () => {
           <div className="navbar-center hidden lg:flex">
             <ul className="flex gap-6">
               {visibleLinks.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className={({ isActive }) =>
-                    isActive
-                      ? "text-black font-semibold underline underline-offset-4"
-                      : "text-white hover:text-gray-200"
-                  }
-                >
-                  <div className="flex items-center gap-1">{link.icon}{link.text}</div>
-                </NavLink>
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-black font-semibold underline underline-offset-4"
+                        : "text-white hover:text-gray-200"
+                    }
+                  >
+                    <div className="flex items-center gap-1">{link.icon}{link.text}</div>
+                  </NavLink>
+                </li>
               ))}
             </ul>
           </div>
@@ -193,31 +239,41 @@ const Navbar = () => {
                 <SiOpenai className="text-2xl" />
               </button>
               {isAiOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-base-100 p-3 rounded-lg shadow-lg z-50">
-                  <h3 className="font-semibold mb-2 flex items-center gap-2">
-                    <SiOpenai className="text-xl" /> AI Assistant
-                  </h3>
+                <div className="absolute right-0 top-12 w-80 bg-base-100 p-3 rounded-lg shadow-lg z-50 border">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-semibold flex items-center gap-2">
+                      <SiOpenai className="text-xl" /> AI Assistant
+                    </h3>
+                    <button 
+                      onClick={() => setIsAiOpen(false)}
+                      className="btn btn-xs btn-ghost"
+                    >
+                      ✕
+                    </button>
+                  </div>
                   <AiAssistant />
                 </div>
               )}
             </div>
 
             {/* 🔔 Notification Icon with Live Count */}
-            <button
-              onClick={() => setIsNotificationOpen(true)}
-              className="btn btn-ghost text-white tooltip tooltip-bottom relative"
-              data-tip="Notifications"
-            >
-              <div className="indicator">
-                <IoNotificationsOutline className="text-2xl" />
-                {/* Live notification count */}
-                {notificationCount > 0 && (
-                  <span className="badge badge-sm indicator-item bg-red-500 text-white border-0 animate-pulse">
-                    {notificationCount > 9 ? '9+' : notificationCount}
-                  </span>
-                )}
-              </div>
-            </button>
+            {user && (
+              <button
+                onClick={() => setIsNotificationOpen(true)}
+                className="btn btn-ghost text-white tooltip tooltip-bottom relative"
+                data-tip="Notifications"
+              >
+                <div className="indicator">
+                  <IoNotificationsOutline className="text-2xl" />
+                  {/* Live notification count */}
+                  {notificationCount > 0 && (
+                    <span className="badge badge-sm indicator-item bg-red-500 text-white border-0 animate-pulse">
+                      {notificationCount > 9 ? '9+' : notificationCount}
+                    </span>
+                  )}
+                </div>
+              </button>
+            )}
 
             {/* USER PROFILE */}
             {user ? (
@@ -238,10 +294,10 @@ const Navbar = () => {
                   className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-xl"
                 >
                   <li>
-                    <span>{user.displayName || user.email}</span>
+                    <span className="font-semibold">{user.displayName || user.email}</span>
                   </li>
                   <li>
-                    <button onClick={handleSignOut} className="text-red-500">
+                    <button onClick={handleSignOut} className="text-red-500 font-medium">
                       Log Out
                     </button>
                   </li>
@@ -271,7 +327,7 @@ const Navbar = () => {
       {isNotificationOpen && (
         <Notification
           onClose={() => setIsNotificationOpen(false)}
-          onRefresh={fetchNotificationCount}
+          onRefresh={refreshNotificationCount}
         />
       )}
     </div>

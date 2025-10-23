@@ -30,7 +30,7 @@ const AiAssistant = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/ai-chat", {
+      const res = await axios.post("https://a11-food-tracker-crud-server.vercel.app/ai-chat", {
         message: userMessage,
       });
       setChat(prev => [...prev, { sender: "bot", text: res.data.reply }]);
