@@ -22,7 +22,7 @@ const MyFoodList = ({ foodsApiPromise }) => {
           setFoods(initialFoods);
         } else {
           // Fallback: fetch foods directly
-          const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/foods?email=' + user?.email, {
+          const response = await fetch('https://foodtracker-server-2.onrender.com/foods?email=' + user?.email, {
             credentials: 'include'
           });
           if (response.ok) {
@@ -69,7 +69,7 @@ const MyFoodList = ({ foodsApiPromise }) => {
       setDeletingId(_id);
       
       try {
-        const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${_id}`, {
+        const response = await fetch(`https://foodtracker-server-2.onrender.com/foods/${_id}`, {
           method: 'DELETE',
           credentials: 'include',
         });
@@ -98,7 +98,7 @@ const MyFoodList = ({ foodsApiPromise }) => {
   const refreshFoods = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/foods?email=' + user?.email, {
+      const response = await fetch('https://foodtracker-server-2.onrender.com/foods?email=' + user?.email, {
         credentials: 'include'
       });
       if (response.ok) {

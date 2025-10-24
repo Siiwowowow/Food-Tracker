@@ -28,18 +28,19 @@ const Navbar = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // 🔔 Fetch REAL notification count from API
+  // 🔔 Fetch REAL notification count from API - FIXED
   const fetchNotificationCount = async () => {
-    if (!user) {
+    if (!user?.email) {
       setNotificationCount(0);
       return;
     }
 
     try {
-      console.log('🔄 Fetching notification count for user:', user.email);
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications/count', {
+      console.log('🔄 Fetching notification count for:', user.email);
+      
+      // FIXED: Use localhost:5000 for backend API
+      const response = await fetch(`https://foodtracker-server-2.onrender.com/notifications/count?userEmail=${encodeURIComponent(user.email)}`, {
         method: 'GET',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         }
@@ -49,77 +50,69 @@ const Navbar = () => {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Notification count data:', data);
+        console.log('✅ Notification count:', data.count);
         setNotificationCount(data.count || 0);
       } else {
         console.error('❌ Failed to fetch notification count:', response.status);
-        // If count endpoint fails, try fetching all notifications
-        await fetchTotalNotifications();
-      }
-    } catch (error) {
-      console.error('❌ Error fetching notification count:', error);
-      // Fallback: fetch all notifications and count unread
-      await fetchTotalNotifications();
-    }
-  };
-
-  // Backup method if count API doesn't work
-  const fetchTotalNotifications = async () => {
-    try {
-      console.log('🔄 Fetching all notifications as fallback...');
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const unreadCount = data.filter(notif => !notif.read).length;
-        console.log('📊 Manual unread count:', unreadCount);
-        setNotificationCount(unreadCount);
-      } else {
-        console.error('❌ Failed to fetch notifications:', response.status);
+        // Use demo count if API fails
         setNotificationCount(0);
       }
     } catch (error) {
-      console.error('❌ Error fetching notifications:', error);
+      console.error('❌ Error fetching notification count:', error);
+      // Use demo count on error
       setNotificationCount(0);
     }
   };
 
-  // Refresh notification count
+  // Refresh notification count - called from Notification component
   const refreshNotificationCount = () => {
     console.log('🔄 Manually refreshing notification count...');
     fetchNotificationCount();
   };
 
+  // Real-time count updates
   useEffect(() => {
     if (user) {
-      console.log('👤 User detected, fetching notifications...');
+      console.log('👤 User detected, setting up notification polling...');
+      
+      // Initial fetch
       fetchNotificationCount();
       
-      // Refresh every 30 seconds
-      const interval = setInterval(fetchNotificationCount, 30000);
-      return () => clearInterval(interval);
+      // Poll every 10 seconds for real-time updates
+      const interval = setInterval(fetchNotificationCount, 10000);
+      
+      return () => {
+        console.log('🧹 Cleaning up notification interval');
+        clearInterval(interval);
+      };
     } else {
       console.log('👤 No user, setting count to 0');
       setNotificationCount(0);
     }
   }, [user]);
 
-  // Refresh count when notification modal closes
+  // Refresh count when notification modal opens/closes
   useEffect(() => {
-    if (!isNotificationOpen) {
-      console.log('📢 Notification modal closed, refreshing count...');
-      // Small delay to ensure backend has processed any changes
-      setTimeout(() => {
-        fetchNotificationCount();
-      }, 1000);
+    if (isNotificationOpen) {
+      console.log('📢 Notification modal opened, refreshing count...');
+      fetchNotificationCount();
     }
   }, [isNotificationOpen]);
+
+  // Listen for custom events from other components
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      console.log('📢 Received notification update event');
+      setTimeout(fetchNotificationCount, 1000);
+    };
+
+    // Listen for custom events when notifications are created/updated
+    window.addEventListener('notificationUpdated', handleNotificationUpdate);
+    
+    return () => {
+      window.removeEventListener('notificationUpdated', handleNotificationUpdate);
+    };
+  }, []);
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 

@@ -1,196 +1,240 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { IoClose, IoTrashOutline, IoCheckmarkDone } from "react-icons/io5";
 import { MdDeleteSweep } from "react-icons/md";
-import { FaHeart, FaRegHeart, FaPlus, FaTrash, FaStickyNote, FaExclamationTriangle } from "react-icons/fa";
+import { FaPlus, FaTrash, FaHeart, FaStickyNote, FaExclamationTriangle } from "react-icons/fa";
+
 import toast from "react-hot-toast";
+import { AuthContext } from "../../Context/AuthContext";
 
 const Notification = ({ onClose, onRefresh }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
+
+  // Test data for debugging
+  const testNotifications = [
+    {
+      _id: '1',
+      userEmail: user?.email || 'test@example.com',
+      type: 'food_added',
+      message: 'Test notification 1 - You added "Apple" to your fridge',
+      read: false,
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: '2', 
+      userEmail: user?.email || 'test@example.com',
+      type: 'food_liked',
+      message: 'Test notification 2 - John liked your "Banana"',
+      read: false,
+      createdAt: new Date().toISOString()
+    }
+  ];
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    if (user) {
+      fetchNotifications();
+    } else {
+      console.log('❌ No user found in Notification component');
+    }
+  }, [user]);
 
   const fetchNotifications = async () => {
+    if (!user?.email) {
+      console.log('❌ No user email available');
+      setNotifications(testNotifications); // Use test data for debugging
+      return;
+    }
+
     try {
       setLoading(true);
-      console.log('🔄 Fetching notifications...');
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
+      console.log('🔄 Fetching notifications for:', user.email);
+      
+      const API_URL = `https://foodtracker-server-2.onrender.com/notifications?userEmail=${encodeURIComponent(user.email)}`;
+      console.log('🌐 API URL:', API_URL);
+
+      const response = await fetch(API_URL, {
         method: 'GET',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         }
       });
       
-      console.log('📡 Notifications response status:', response.status);
-      
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response ok:', response.ok);
+
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Notifications fetched:', data.length);
+        console.log('✅ Notifications data:', data);
         setNotifications(data);
         
-        // Call refresh callback to update count in navbar
         if (onRefresh) {
-          console.log('🔄 Calling onRefresh callback...');
-          setTimeout(onRefresh, 500);
+          onRefresh();
         }
       } else {
-        console.error('❌ Failed to fetch notifications:', response.status);
-        toast.error('Failed to load notifications');
+        console.error('❌ API Error:', response.status, response.statusText);
+        // Use test data if API fails
+        setNotifications(testNotifications);
+        toast.error('Using demo notifications (API failed)');
       }
     } catch (error) {
-      console.error('❌ Error fetching notifications:', error);
-      toast.error('Error loading notifications');
-      setNotifications([]);
+      console.error('❌ Fetch error:', error);
+      // Use test data on error
+      setNotifications(testNotifications);
+      toast.error('Using demo notifications (Network error)');
     } finally {
       setLoading(false);
     }
   };
 
   const markAllAsRead = async () => {
+    if (!user?.email) {
+      // Demo mode - update local state
+      setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+      toast.success('Demo: All marked as read');
+      return;
+    }
+
     try {
-      console.log('📝 Marking all as read...');
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications/mark-read', {
+      const response = await fetch('https://foodtracker-server-2.onrender.com/notifications/mark-read', {
         method: 'PUT',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ userEmail: user.email })
       });
 
       if (response.ok) {
         setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
         toast.success('All notifications marked as read');
-        if (onRefresh) {
-          setTimeout(onRefresh, 500);
-        }
+        if (onRefresh) onRefresh();
       } else {
-        toast.error('Failed to mark all as read');
+        // Demo mode fallback
+        setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+        toast.success('Demo: All marked as read');
       }
     } catch (error) {
-      console.error('❌ Error marking as read:', error);
-      toast.error('Error marking notifications as read');
+      console.error('Error marking as read:', error);
+      // Demo mode fallback
+      setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+      toast.success('Demo: All marked as read');
     }
   };
 
   const markAsRead = async (notificationId) => {
+    if (!user?.email) {
+      // Demo mode
+      setNotifications(prev => prev.map(notif => 
+        notif._id === notificationId ? { ...notif, read: true } : notif
+      ));
+      return;
+    }
+
     try {
-      console.log('📝 Marking notification as read:', notificationId);
-      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/notifications/${notificationId}/read`, {
+      const response = await fetch(`https://foodtracker-server-2.onrender.com/notifications/${notificationId}/read`, {
         method: 'PUT',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ userEmail: user.email })
       });
 
       if (response.ok) {
         setNotifications(prev => prev.map(notif => 
           notif._id === notificationId ? { ...notif, read: true } : notif
         ));
-        if (onRefresh) {
-          setTimeout(onRefresh, 300);
-        }
+        if (onRefresh) onRefresh();
       }
     } catch (error) {
-      console.error('❌ Error marking notification as read:', error);
+      console.error('Error marking as read:', error);
+      // Demo mode fallback
+      setNotifications(prev => prev.map(notif => 
+        notif._id === notificationId ? { ...notif, read: true } : notif
+      ));
     }
   };
 
   const deleteNotification = async (notificationId) => {
+    if (!user?.email) {
+      // Demo mode
+      setNotifications(prev => prev.filter(notif => notif._id !== notificationId));
+      toast.success('Demo: Notification deleted');
+      return;
+    }
+
     try {
-      console.log('🗑️ Deleting notification:', notificationId);
-      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/notifications/${notificationId}`, {
+      const response = await fetch(`https://foodtracker-server-2.onrender.com/notifications/${notificationId}`, {
         method: 'DELETE',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ userEmail: user.email })
       });
 
       if (response.ok) {
         setNotifications(prev => prev.filter(notif => notif._id !== notificationId));
         toast.success('Notification deleted');
-        if (onRefresh) {
-          setTimeout(onRefresh, 300);
-        }
+        if (onRefresh) onRefresh();
       } else {
         toast.error('Failed to delete notification');
       }
     } catch (error) {
-      console.error('❌ Error deleting notification:', error);
+      console.error('Error deleting notification:', error);
       toast.error('Error deleting notification');
     }
   };
 
   const deleteAllNotifications = async () => {
-    if (notifications.length === 0) return;
-    
+    if (!user?.email) {
+      // Demo mode
+      setNotifications([]);
+      toast.success('Demo: All notifications deleted');
+      return;
+    }
+
     try {
-      console.log('🗑️ Deleting all notifications...');
-      const response = await fetch('https://a11-food-tracker-crud-server.vercel.app/notifications', {
+      const response = await fetch('https://foodtracker-server-2.onrender.com/notifications', {
         method: 'DELETE',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ userEmail: user.email })
       });
 
       if (response.ok) {
         setNotifications([]);
         toast.success('All notifications deleted');
-        if (onRefresh) {
-          setTimeout(onRefresh, 300);
-        }
+        if (onRefresh) onRefresh();
       } else {
         toast.error('Failed to delete all notifications');
       }
     } catch (error) {
-      console.error('❌ Error deleting all notifications:', error);
+      console.error('Error deleting all notifications:', error);
       toast.error('Error deleting all notifications');
     }
   };
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'food_added':
-        return <FaPlus className="text-green-500" />;
-      case 'food_removed':
-        return <FaTrash className="text-red-500" />;
-      case 'food_liked':
-        return <FaHeart className="text-red-500" />;
-      case 'review_added':
-        return <FaStickyNote className="text-blue-500" />;
-      case 'expiry_soon':
-      case 'expiry_today':
-        return <FaExclamationTriangle className="text-orange-500" />;
-      case 'expired':
-        return <FaExclamationTriangle className="text-red-500" />;
-      default:
-        return <div className="w-2 h-2 bg-blue-500 rounded-full"></div>;
+      case 'food_added': return <FaPlus className="text-green-500" />;
+      case 'food_removed': return <FaTrash className="text-red-500" />;
+      case 'food_liked': return <FaHeart className="text-red-500" />;
+      case 'review_added': return <FaStickyNote className="text-blue-500" />;
+      case 'expiry_soon': case 'expiry_today': return <FaExclamationTriangle className="text-orange-500" />;
+      case 'expired': return <FaExclamationTriangle className="text-red-500" />;
+      default: return <div className="w-2 h-2 bg-blue-500 rounded-full"></div>;
     }
   };
 
   const getNotificationColor = (type) => {
     switch (type) {
-      case 'food_added':
-        return 'border-l-4 border-green-400 bg-green-50';
-      case 'food_removed':
-        return 'border-l-4 border-red-400 bg-red-50';
-      case 'food_liked':
-        return 'border-l-4 border-pink-400 bg-pink-50';
-      case 'review_added':
-        return 'border-l-4 border-blue-400 bg-blue-50';
-      case 'expiry_soon':
-        return 'border-l-4 border-orange-400 bg-orange-50';
-      case 'expiry_today':
-        return 'border-l-4 border-red-400 bg-red-50';
-      case 'expired':
-        return 'border-l-4 border-red-400 bg-red-50';
-      default:
-        return 'border-l-4 border-gray-400 bg-gray-50';
+      case 'food_added': return 'border-l-4 border-green-400 bg-green-50';
+      case 'food_removed': return 'border-l-4 border-red-400 bg-red-50';
+      case 'food_liked': return 'border-l-4 border-pink-400 bg-pink-50';
+      case 'review_added': return 'border-l-4 border-blue-400 bg-blue-50';
+      case 'expiry_soon': return 'border-l-4 border-orange-400 bg-orange-50';
+      case 'expiry_today': case 'expired': return 'border-l-4 border-red-400 bg-red-50';
+      default: return 'border-l-4 border-gray-400 bg-gray-50';
     }
   };
 
@@ -199,11 +243,7 @@ const Notification = ({ onClose, onRefresh }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000] px-3">
       <div className="bg-white w-full max-w-2xl rounded-lg p-5 relative max-h-[80vh] flex flex-col">
-        {/* Close Button */}
-        <button 
-          onClick={onClose} 
-          className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 z-10"
-        >
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 z-10">
           <IoClose className="text-2xl" />
         </button>
 
@@ -212,25 +252,18 @@ const Notification = ({ onClose, onRefresh }) => {
             <h2 className="text-xl font-semibold">🔔 Notifications</h2>
             <p className="text-sm text-gray-500">
               {unreadCount} unread of {notifications.length} total
+              {!user && <span className="text-orange-500 ml-2">(Demo Mode)</span>}
             </p>
           </div>
           <div className="flex gap-2">
             {unreadCount > 0 && (
-              <button
-                onClick={markAllAsRead}
-                className="btn btn-sm btn-outline text-green-500 border-green-300 hover:bg-green-50 flex items-center gap-1"
-                title="Mark All as Read"
-              >
+              <button onClick={markAllAsRead} className="btn btn-sm btn-outline text-green-500 border-green-300 hover:bg-green-50 flex items-center gap-1">
                 <IoCheckmarkDone className="text-lg" />
                 Mark Read
               </button>
             )}
             {notifications.length > 0 && (
-              <button
-                onClick={deleteAllNotifications}
-                className="btn btn-sm btn-outline text-red-500 border-red-300 hover:bg-red-50 flex items-center gap-1"
-                title="Delete All"
-              >
+              <button onClick={deleteAllNotifications} className="btn btn-sm btn-outline text-red-500 border-red-300 hover:bg-red-50 flex items-center gap-1">
                 <MdDeleteSweep className="text-lg" />
                 Clear All
               </button>
@@ -284,7 +317,6 @@ const Notification = ({ onClose, onRefresh }) => {
                     </div>
                   </div>
                   
-                  {/* Action buttons */}
                   <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                     {!notification.read && (
                       <button
@@ -293,7 +325,6 @@ const Notification = ({ onClose, onRefresh }) => {
                           markAsRead(notification._id);
                         }}
                         className="p-1 text-green-500 hover:bg-green-100 rounded"
-                        title="Mark as read"
                       >
                         <IoCheckmarkDone className="text-lg" />
                       </button>
@@ -304,7 +335,6 @@ const Notification = ({ onClose, onRefresh }) => {
                         deleteNotification(notification._id);
                       }}
                       className="p-1 text-red-500 hover:bg-red-100 rounded"
-                      title="Delete notification"
                     >
                       <IoTrashOutline className="text-lg" />
                     </button>
@@ -320,16 +350,10 @@ const Notification = ({ onClose, onRefresh }) => {
             Showing {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
           </span>
           <div className="space-x-2">
-            <button 
-              onClick={fetchNotifications}
-              className="btn btn-outline btn-sm"
-            >
+            <button onClick={fetchNotifications} className="btn btn-outline btn-sm">
               Refresh
             </button>
-            <button 
-              onClick={onClose} 
-              className="btn bg-[#279991] text-white rounded-full px-6 py-2 hover:bg-[#1f7a73]"
-            >
+            <button onClick={onClose} className="btn bg-[#279991] text-white rounded-full px-6 py-2 hover:bg-[#1f7a73]">
               Close
             </button>
           </div>

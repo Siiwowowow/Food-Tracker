@@ -8,7 +8,7 @@ const LimitFood = () => {
   const { data: foods, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['limitedFoods'],
     queryFn: async () => {
-      const response = await axios.get('https://a11-food-tracker-crud-server.vercel.app/foods/limit');
+      const response = await axios.get('https://foodtracker-server-2.onrender.com/foods/limit');
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes cache

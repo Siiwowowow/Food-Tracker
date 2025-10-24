@@ -31,7 +31,7 @@ const SignIn = () => {
       toast.success('Signed in successfully!');
 
       // send login email notification (optional)
-      await axios.get(`https://a11-food-tracker-crud-server.vercel.app/send-login-email?email=${user.email}`);
+      await axios.get(`https://foodtracker-server-2.onrender.com/send-login-email?email=${user.email}`);
 
       navigate(from);
     } catch (error) {
@@ -51,7 +51,7 @@ const SignIn = () => {
 
       setUser(user);
       toast.success('Signed in with Google!');
-      await axios.get(`https://a11-food-tracker-crud-server.vercel.app/send-login-email?email=${user.email}`);
+      await axios.get(`https://foodtracker-server-2.onrender.com/send-login-email?email=${user.email}`);
 
       navigate(from);
     } catch (err) {

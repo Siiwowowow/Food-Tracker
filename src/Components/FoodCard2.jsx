@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import { AiOutlineLike, AiFillLike } from 'react-icons/ai';
 import { motion } from "framer-motion";
 import { AuthContext } from '../Context/AuthContext';
-
 import toast from 'react-hot-toast';
 
 const FoodCard2 = ({ food }) => {
@@ -47,12 +46,14 @@ const FoodCard2 = ({ food }) => {
     setIsLiking(true);
 
     try {
-      const response = await fetch(`https://a11-food-tracker-crud-server.vercel.app/like/${_id}`, {
+      const response = await fetch(`https://foodtracker-server-2.onrender.com/like/${_id}`, { // Changed port to 5000
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important for authentication
+        body: JSON.stringify({ // Added request body with userEmail
+          userEmail: user.email
+        })
       });
 
       const data = await response.json();
@@ -77,7 +78,6 @@ const FoodCard2 = ({ food }) => {
     }
   };
 
- 
   const today = new Date();
   const expiry = new Date(expiryDate);
   const isExpired = expiry < today;
@@ -110,8 +110,34 @@ const FoodCard2 = ({ food }) => {
             e.target.src = '/default-food-image.jpg';
           }}
         />
-        {/* Like button overlay on image */}
         
+        {/* Like button overlay on image */}
+        <div className="absolute top-2 left-2">
+          <button
+            onClick={handleLike}
+            disabled={isLiking || !user || user?.email === userEmail}
+            className={`flex items-center gap-1 p-2 rounded-full transition-all duration-200 ${
+              liked 
+                ? 'bg-red-500 text-white shadow-lg' 
+                : 'bg-white/90 text-gray-700 hover:bg-white'
+            } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
+              !user || user?.email === userEmail ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            title={
+              !user ? 'Login to like' : 
+              user?.email === userEmail ? "Can't like your own food" : 
+              liked ? 'Unlike' : 'Like'
+            }
+          >
+            {isLiking ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+            ) : liked ? (
+              <AiFillLike size={18} />
+            ) : (
+              <AiOutlineLike size={18} />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -144,34 +170,7 @@ const FoodCard2 = ({ food }) => {
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 text-sm">
-              
-              <div className="relative p-2 flex justify-end">
-          <button
-            onClick={handleLike}
-            disabled={isLiking || !user || user?.email === userEmail}
-            className={`flex items-center gap-1 p-2 rounded-full transition-all duration-200 ${
-              liked 
-                ? 'bg-red-500 text-white shadow-lg' 
-                : 'bg-white/90 text-gray-700 hover:bg-white'
-            } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
-              !user || user?.email === userEmail ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title={
-              !user ? 'Login to like' : 
-              user?.email === userEmail ? "Can't like your own food" : 
-              liked ? 'Unlike' : 'Like'
-            }
-          >
-            {isLiking ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-            ) : liked ? (
-              <AiFillLike size={18} />
-            ) : (
-              <AiOutlineLike size={18} />
-            )}
-          </button>
-        </div>
-              <span className="text-gray-600 font-medium">{likeCount}</span>
+              <span className="text-gray-600 font-medium">{likeCount} likes</span>
             </div>
           </div>
         </div>

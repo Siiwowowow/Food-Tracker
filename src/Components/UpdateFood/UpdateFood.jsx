@@ -15,7 +15,7 @@ const UpdateFood = () => {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-    fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${id}`)
+    fetch(`https://foodtracker-server-2.onrender.com/foods/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setFoodImage(data.foodImage || '');
@@ -45,7 +45,7 @@ const UpdateFood = () => {
       userEmail,
     };
 
-    fetch(`https://a11-food-tracker-crud-server.vercel.app/foods/${id}`, {
+    fetch(`https://foodtracker-server-2.onrender.com/foods/${id}`, {
       method: 'PUT',
       credentials: 'include',
       headers: {

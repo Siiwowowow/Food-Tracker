@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import FoodCardExpired from './FoodCardExpired';
 
 const Foodcard3 = () => {
-    const foodPromise=fetch('https://a11-food-tracker-crud-server.vercel.app/foods/expired')
+    const foodPromise=fetch('https://foodtracker-server-2.onrender.com/foods/expired')
  .then(res=>res.json())
     return (
         <div>
